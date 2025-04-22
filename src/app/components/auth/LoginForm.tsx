@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
+import Link from "next/link";
 
 export default function LoginComponent() {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
@@ -230,9 +231,12 @@ export default function LoginComponent() {
                 </div>
 
                 <div className="flex justify-end mb-6">
-                  <a href="#" className="text-sm text-black hover:underline">
+                  <Link
+                    href="/forget-password"
+                    className="text-sm text-black hover:underline"
+                  >
                     Forgot Password?
-                  </a>
+                  </Link>
                 </div>
               </>
             ) : (
