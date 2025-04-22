@@ -37,7 +37,7 @@ export default function UnitSelectionScreen() {
       <div className="absolute top-4 right-4 text-black font-medium text-sm">
         {dateTime}
       </div>
-      <div className="text-center mt-30">
+      <div className="text-center mt-20">
         <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 text-black">
           Welcome to the
         </h3>
@@ -53,7 +53,7 @@ export default function UnitSelectionScreen() {
         </h5>
       </div>
 
-      <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10">
+      <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10 mt-10">
         <div className="flex flex-col items-center w-40">
           <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
             <Image
