@@ -33,23 +33,27 @@ export default function UnitSelectionScreen() {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col justify-center items-center">
-      <div className="absolute top-4 right-4 text-black font-bold font-medium text-sm">
+    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col items-center ">
+      <div className="absolute top-4 right-4 text-black font-medium text-sm">
         {dateTime}
       </div>
-      <div className="text-center mb-2">
+      <div className="text-center mt-20">
         <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 text-black">
           Welcome to the
         </h3>
-        <h1 className="text-2xl sm:text-2xl lg:text-4xl font-bold mb-2 text-[#0088B1]">
+        <h1 className="text-2xl sm:text-2xl lg:text-5xl font-bold mb-2 text-[#0088B1]">
           Mediversal Healthcare
         </h1>
         <h3 className="text-lg sm:text-xl lg:text-2xl mb-4 text-black">
           ERP One
         </h3>
+        <h5 className="text-md sm:text-xl lg:text-base mb-4 text-black">
+          Please select the branch where you are working <br />
+          or where you want to work.
+        </h5>
       </div>
 
-      <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10">
+      <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10 mt-10">
         <div className="flex flex-col items-center w-40">
           <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
             <Image
