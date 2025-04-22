@@ -6,6 +6,7 @@ import MediversaLMaatriLogo from "../assests/svgs/Mediversal Maatri.svg";
 import MediversalHealthStudio1 from "../assests/svgs/Mediversal Health Studio.svg";
 import Vector1 from "../assests/svgs/Vector 1.svg";
 import Vector2 from "../assests/svgs/Vector 2.svg";
+import LoginComponent from "@/app/components/auth/LoginForm";
 export default function LoginScreen() {
   return (
     <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
@@ -88,6 +89,9 @@ export default function LoginScreen() {
             className="w-full h-40 sm:h-56 lg:h-80 object-cover"
           />
         </div>
+      </div>
+      <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl">
+        <LoginComponent />
       </div>
     </div>
   );
