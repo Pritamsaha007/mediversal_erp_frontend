@@ -1,4 +1,3 @@
-import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
 import React from "react";
 import Image from "next/image";
 import MainImg from "../auth/assests/svgs/Doctors-cuate 1.svg";
@@ -91,9 +90,7 @@ export default function ForgetPasswordPage() {
           />
         </div>
       </div>
-      <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl">
-        <ForgetPasswordComponent />{" "}
-      </div>
+      <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl"></div>
     </div>
   );
 }

@@ -273,25 +273,28 @@ export default function LoginComponent() {
   return (
     <div className="relative min-h-screen bg-white flex flex-col justify-between">
       <div className="absolute top-4 left-6 right-6 flex justify-between items-center text-sm text-gray-600 pt-14">
-        {showOtpInput && (
-          <button
-            type="button"
-            className="flex items-center text-[#0088B1] font-medium"
-            onClick={() => {
-              setShowOtpInput(false);
-              setOtp(["", "", "", "", "", ""]);
-            }}
-          >
-            <ArrowLeft className="mr-2" size={18} />
-            Back
-          </button>
+        {showOtpInput ? (
+          <>
+            <button
+              type="button"
+              className="flex items-center text-[#0088B1] font-medium"
+              onClick={() => {
+                setShowOtpInput(false);
+                setOtp(["", "", "", "", "", ""]);
+              }}
+            >
+              <ArrowLeft className="mr-2" size={18} />
+            </button>
+            <div>{currentDateTime}</div>
+          </>
+        ) : (
+          <div className="ml-auto">{currentDateTime}</div>
         )}
-        <div>{currentDateTime}</div>
       </div>
 
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
-          <h1 className="text-[#0088B1] text-3xl font-bold text-left mb-10 font-zak">
+          <h1 className="text-[#0088B1] text-[40px] font-bold text-left mb-10 font-zak">
             {showOtpInput ? "Login" : "Login"}
           </h1>
 
@@ -317,10 +320,10 @@ export default function LoginComponent() {
                         name="email"
                         value={email}
                         onChange={handleInputChange}
-                        className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                        className="w-full p-2 border border-[#E5E8E9] rounded-r-0 focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                         placeholder="Enter your official email"
                       />
-                      <span className="bg-gray-100 text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-md shadow-[#E8F4F7">
+                      <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[ -4px_0_6px_0_#E8F4F7 ]">
                         @mediversal.in
                       </span>
                     </div>
@@ -372,12 +375,9 @@ export default function LoginComponent() {
                 </div>
 
                 <div className="flex justify-end mb-6">
-                  <Link
-                    href="/forget-password"
-                    className="text-sm text-black hover:underline"
-                  >
-                    Forgot Password?
-                  </Link>
+                  <button onClick={onForgotPassword} className="text-[#000000]">
+                    Forgot Password
+                  </button>
                 </div>
               </>
             ) : (
@@ -452,3 +452,4 @@ export default function LoginComponent() {
     </div>
   );
 }
+export default LoginComponent;
