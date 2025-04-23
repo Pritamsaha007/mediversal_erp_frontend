@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoginToggle from "../ui/Toggle";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function ForgetPasswordComponent() {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
@@ -200,6 +201,13 @@ export default function ForgetPasswordComponent() {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+      <div className="text-center mb-20">
+        <p className="text-sm text-[#000000] mb-2">Accredited by</p>
+        <div className="flex justify-center gap-4">
+          <Image src="/image/NABH.svg" alt="NABH" width={50} height={50} />
+          <Image src="/image/NABL.svg" alt="NABL" width={50} height={50} />
         </div>
       </div>
     </div>
