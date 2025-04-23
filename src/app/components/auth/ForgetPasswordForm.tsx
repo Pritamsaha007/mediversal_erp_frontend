@@ -124,7 +124,7 @@ export default function ForgetPasswordComponent() {
       {/* Center Card */}
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
-          <h1 className="text-[#0088B1] text-3xl font-bold text-left mb-10">
+          <h1 className="text-[#0088B1] text-[40px] font-bold text-left mb-10">
             Forget Password
           </h1>
 
@@ -151,7 +151,7 @@ export default function ForgetPasswordComponent() {
                     className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                     placeholder="Enter your official email"
                   />
-                  <span className="bg-gray-100 text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-md">
+                  <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[ -4px_0_6px_0_#E8F4F7 ]">
                     @mediversal.in
                   </span>
                 </div>
