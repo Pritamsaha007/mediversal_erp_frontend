@@ -4,27 +4,34 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
 import Link from "next/link";
+import { useAuthStore } from "../../../../store/loginStore";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+const API_BASE_URL = "http://13.235.51.113:3000/api";
 
 export default function LoginComponent() {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
-  const [loginMethod, setLoginMethod] = useState<string>("email");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
+  const [showPassword, setShowPassword] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(50);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    email: "",
-    mobile: "",
-    password: "",
+  const { setLoginDetails, email, phoneNo, password } = useAuthStore();
+
+  const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-
+  const router = useRouter();
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (showOtpInput && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
+      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [showOtpInput, timer]);
@@ -43,38 +50,188 @@ export default function LoginComponent() {
     };
 
     updateDateTime();
-    const interval = setInterval(updateDateTime, 100);
-
+    const interval = setInterval(updateDateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    // Update login method in the store when it changes
+    setLoginDetails(email, phoneNo, password, loginMethod);
+  }, [loginMethod]);
+
   const loginOptions = [
     { id: "email", label: "Email" },
-    { id: "mobile", label: "Mobile" },
+    { id: "phone", label: "Phone" },
   ];
 
   const handleLoginToggle = (selectedId: string) => {
-    setLoginMethod(selectedId);
+    setLoginMethod(selectedId as "email" | "phone");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "email") {
+      setLoginDetails(value, phoneNo, password, loginMethod);
+    } else if (name === "phone") {
+      setLoginDetails(
+        email,
+        parseInt(value) || undefined,
+        password,
+        loginMethod
+      );
+    } else if (name === "password") {
+      setLoginDetails(email, phoneNo, value, loginMethod);
+    }
+  };
+
+  const getIdentifier = () => {
+    return loginMethod === "email"
+      ? email + "@mediversal.in"
+      : phoneNo?.toString();
+  };
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const identifier = getIdentifier();
+
+      if (!identifier) {
+        throw new Error(
+          `Please enter your ${
+            loginMethod === "email" ? "email" : "phone number"
+          }`
+        );
+      }
+
+      if (!password) {
+        throw new Error("Please enter your password");
+      }
+
+      const response = await api.post("/login", {
+        identifier,
+        password,
+        method: loginMethod,
+      });
+
+      if (response.data.success) {
+        console.log("Login successful, OTP sent:", response.data);
+        setShowOtpInput(true);
+        setTimer(50);
+      } else {
+        setError(response.data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message || "Login failed. Please try again."
+        );
+      } else {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    const otpValue = otp.join("");
+    if (otpValue.length !== 6) {
+      setError("Please enter a valid 6-digit OTP");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const identifier = getIdentifier();
+
+      const response = await api.post("/verify-otp", {
+        identifier,
+        otp: otpValue,
+        method: loginMethod,
+      });
+
+      if (response.data.success) {
+        console.log("OTP verified successfully:", response.data);
+
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+        router.push("/unitselection");
+      } else {
+        setError(response.data.message || "Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during OTP verification:", error);
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
+            "OTP verification failed. Please try again."
+        );
+      } else {
+        setError(
+          "Something went wrong during OTP verification. Please try again."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!showOtpInput) {
-      const formDataWithCountryCode =
-        loginMethod === "mobile"
-          ? { ...formData, mobile: `+91 ${formData.mobile}` }
-          : formData;
-      console.log("Form submitted:", formDataWithCountryCode);
-      setShowOtpInput(true);
-      setTimer(50); // reset timer when showing OTP input
+      handleLogin();
     } else {
-      console.log("OTP entered:", otp.join(""));
-      // handle OTP verification here
+      handleVerifyOtp();
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (timer > 0) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const identifier = getIdentifier();
+
+      const response = await api.post("/login", {
+        identifier,
+        password,
+        method: loginMethod,
+      });
+
+      if (response.data.success) {
+        console.log("OTP resent successfully:", response.data);
+        setTimer(50);
+      } else {
+        setError(
+          response.data.message || "Failed to resend OTP. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
+            "Failed to resend OTP. Please try again."
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,23 +239,18 @@ export default function LoginComponent() {
     if (/^\d*$/.test(value)) {
       const newOtp = [...otp];
 
-      // If pasted string
       if (value.length > 1) {
         const values = value.split("").slice(0, 6);
         values.forEach((digit, idx) => {
           if (index + idx < 6) newOtp[index + idx] = digit;
         });
         setOtp(newOtp);
-
-        // Focus next empty input
         const nextIndex = Math.min(index + values.length, 5);
         const nextInput = document.getElementById(`otp-${nextIndex}`);
         if (nextInput) (nextInput as HTMLInputElement).focus();
       } else {
         newOtp[index] = value;
         setOtp(newOtp);
-
-        // Move to next box if not last
         if (value && index < 5) {
           const nextInput = document.getElementById(`otp-${index + 1}`);
           if (nextInput) (nextInput as HTMLInputElement).focus();
@@ -106,6 +258,7 @@ export default function LoginComponent() {
       }
     }
   };
+
   const handleOtpKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
@@ -129,7 +282,6 @@ export default function LoginComponent() {
 
   return (
     <div className="relative min-h-screen bg-white flex flex-col justify-between">
-      {/* Top Date & Time */}
       <div className="absolute top-4 left-6 right-6 flex justify-between items-center text-sm text-gray-600 pt-14">
         {showOtpInput && (
           <button
@@ -138,6 +290,7 @@ export default function LoginComponent() {
             onClick={() => {
               setShowOtpInput(false);
               setOtp(["", "", "", "", "", ""]);
+              setError(null);
             }}
           >
             <ArrowLeft className="mr-2" size={18} />
@@ -147,11 +300,10 @@ export default function LoginComponent() {
         <div>{currentDateTime}</div>
       </div>
 
-      {/* Center Login/OTP Card */}
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
           <h1 className="text-[#0088B1] text-2xl font-bold text-left mb-10">
-            {showOtpInput ? "Login" : "Login"}
+            Login
           </h1>
 
           {!showOtpInput && (
@@ -164,10 +316,15 @@ export default function LoginComponent() {
             </div>
           )}
 
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             {!showOtpInput ? (
               <>
-                {/* Email or Mobile Input */}
                 {loginMethod === "email" ? (
                   <div className="mb-4">
                     <div className="flex">
@@ -175,7 +332,7 @@ export default function LoginComponent() {
                         type="text"
                         id="email"
                         name="email"
-                        value={formData.email}
+                        value={email}
                         onChange={handleInputChange}
                         className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                         placeholder="Enter your official email"
@@ -188,17 +345,18 @@ export default function LoginComponent() {
                 ) : (
                   <div className="mb-4">
                     <div className="flex">
-                      <div className="flex items-center px-3 py-2 bg-gray-50 text-[#0088B1] font-medium border border-[#E5E8E9] border-r-0">
+                      <div className="flex items-center px-3 py-2 bg-gray-50 text-[#0088B1] font-medium border border-[#E5E8E9] border-r-0 rounded-l">
                         +91
                       </div>
                       <input
                         type="tel"
-                        id="mobile"
-                        name="mobile"
-                        value={formData.mobile}
+                        id="phone"
+                        name="phone"
+                        value={phoneNo || ""}
                         onChange={handleInputChange}
-                        className="w-full p-2 border border-[#E5E8E9] border-l-0 rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                        className="w-full p-2 border border-[#E5E8E9] rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                         placeholder="Enter your mobile number"
+                        maxLength={10}
                       />
                     </div>
                   </div>
@@ -211,7 +369,7 @@ export default function LoginComponent() {
                       type={showPassword ? "text" : "password"}
                       id="password"
                       name="password"
-                      value={formData.password}
+                      value={password}
                       onChange={handleInputChange}
                       className="w-full p-2 border border-[#E5E8E9] rounded focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                       placeholder="Enter your password"
@@ -241,15 +399,15 @@ export default function LoginComponent() {
               </>
             ) : (
               <>
-                {/* OTP Info */}
                 <p className="text-[#161D1F] mb-4 text-left font-medium">
-                  Otp has been sent to your registered
-                  <span className="font-bold"> phone/email</span>. Please enter
-                  the OTP below.
+                  OTP has been sent to your registered{" "}
+                  <span className="font-bold">
+                    {loginMethod === "email" ? "email" : "phone number"}
+                  </span>
+                  . Please enter the OTP below.
                 </p>
 
-                {/* OTP Boxes */}
-                <div className="flex justify-between  mb-4">
+                <div className="flex justify-between mb-4">
                   {otp.map((value, index) => (
                     <input
                       key={index}
@@ -259,22 +417,21 @@ export default function LoginComponent() {
                       value={value}
                       onChange={(e) => handleOtpChange(e.target.value, index)}
                       onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                      className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#B3B3B3]"
+                      className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#161D1F]"
                     />
                   ))}
                 </div>
 
-                {/* Timer and Resend */}
                 <div className="text-center mb-6">
                   <span className="text-[#0088B1] font-medium">{timer}s</span>
                   <button
                     type="button"
-                    disabled={timer > 0}
-                    onClick={() => {
-                      setTimer(50);
-                    }}
+                    disabled={timer > 0 || isLoading}
+                    onClick={handleResendOtp}
                     className={`ml-4 text-black ${
-                      timer > 0 ? "opacity-50 cursor-not-allowed" : ""
+                      timer > 0 || isLoading
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
                     Resend OTP
@@ -283,20 +440,25 @@ export default function LoginComponent() {
               </>
             )}
 
-            {/* Submit Button */}
             <div className="mb-6">
               <button
                 type="submit"
-                className="w-full bg-[#0088B1] text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors"
+                disabled={isLoading}
+                className={`w-full bg-[#0088B1] text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors ${
+                  isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
-                {showOtpInput ? "Verify OTP" : "Login"}
+                {isLoading
+                  ? "Loading..."
+                  : showOtpInput
+                  ? "Verify OTP"
+                  : "Login"}
               </button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* Bottom Accreditation */}
       <div className="text-center mb-20">
         <p className="text-sm text-[#000000] mb-2">Accredited by</p>
         <div className="flex justify-center gap-4">
