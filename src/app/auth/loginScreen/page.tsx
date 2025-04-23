@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
 import MainImg from "../assests/svgs/Doctors-cuate 1.svg";
 import MainMediversalLogo from "../assests/svgs/Mediversal FLogo - Color 1.svg";
@@ -7,7 +8,9 @@ import MediversalHealthStudio1 from "../assests/svgs/Mediversal Health Studio.sv
 import Vector1 from "../assests/svgs/Vector 1.svg";
 import Vector2 from "../assests/svgs/Vector 2.svg";
 import LoginComponent from "@/app/components/auth/LoginForm";
+import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
 export default function LoginScreen() {
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   return (
     <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center text-center p-4 lg:p-8 relative overflow-hidden">
@@ -91,7 +94,13 @@ export default function LoginScreen() {
         </div>
       </div>
       <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl">
-        <LoginComponent />
+        {isForgotPassword ? (
+          <ForgetPasswordComponent
+            onBackToLogin={() => setIsForgotPassword(false)}
+          />
+        ) : (
+          <LoginComponent onForgotPassword={() => setIsForgotPassword(true)} />
+        )}{" "}
       </div>
     </div>
   );
