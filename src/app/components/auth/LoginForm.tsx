@@ -66,7 +66,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // Prevent domain input in email field
     if (name === "email") {
       const usernameOnly = value.split("@")[0];
       setFormData((prev) => ({ ...prev, [name]: usernameOnly }));
