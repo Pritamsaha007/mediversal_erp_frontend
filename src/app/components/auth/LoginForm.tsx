@@ -3,13 +3,17 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
-import Link from "next/link";
 import { useAuthStore } from "../../store/loginStore";
 import { authService } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-export default function LoginComponent() {
+type LoginComponentProps = {
+  onForgotPassword: () => void;
+};
+const LoginComponent: React.FC<LoginComponentProps> = ({
+  onForgotPassword,
+}) => {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
   const [showPassword, setShowPassword] = useState(false);
@@ -451,5 +455,5 @@ export default function LoginComponent() {
       </div>
     </div>
   );
-}
+};
 export default LoginComponent;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoginToggle from "../ui/Toggle";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 type ForgetPasswordComponentProps = {
@@ -22,7 +22,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
     mobile: "",
   });
 
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     const updateDateTime = () => {
