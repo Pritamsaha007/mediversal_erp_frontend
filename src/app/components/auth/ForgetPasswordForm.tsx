@@ -5,11 +5,18 @@ import LoginToggle from "../ui/Toggle";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export default function ForgetPasswordComponent() {
+type ForgetPasswordComponentProps = {
+  onBackToLogin: () => void;
+};
+
+const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
+  onBackToLogin,
+}) => {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [loginMethod, setLoginMethod] = useState<string>("email");
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     mobile: "",
@@ -74,10 +81,19 @@ export default function ForgetPasswordComponent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Forget Password submit:", formData);
-
-    // Simulate sending OTP
-    setShowOtpInput(true);
+    if (!showOtpInput) {
+      // Step 1: Send OTP
+      console.log("Sending OTP to:", formData);
+      setShowOtpInput(true);
+    } else if (!isOtpVerified) {
+      // Step 2: Verify OTP (mock verification)
+      console.log("Verifying OTP:", otp.join(""));
+      setIsOtpVerified(true);
+    } else {
+      // Step 3: Save new password
+      console.log("Saving new password");
+      // Add actual API call here
+    }
   };
 
   const handleOtpKeyDown = (
@@ -103,7 +119,16 @@ export default function ForgetPasswordComponent() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let sanitizedValue = value;
+
+    if (name === "email") {
+      sanitizedValue = value.split("@")[0]; // Remove domain
+    } else if (name === "mobile") {
+      sanitizedValue = value.replace(/\D/g, ""); // Allow digits only
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: sanitizedValue }));
   };
 
   return (
@@ -113,10 +138,9 @@ export default function ForgetPasswordComponent() {
         <button
           type="button"
           className="flex items-center text-[#0088B1] font-medium"
-          onClick={() => router.back()}
+          onClick={onBackToLogin}
         >
           <ArrowLeft className="mr-2" size={18} />
-          Back
         </button>
         <div>{currentDateTime}</div>
       </div>
@@ -139,65 +163,97 @@ export default function ForgetPasswordComponent() {
 
           <form onSubmit={handleSubmit}>
             {/* Email or Mobile Input */}
-            {loginMethod === "email" ? (
-              <div className="mb-6">
-                <div className="flex">
-                  <input
-                    type="text"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
-                    placeholder="Enter your official email"
-                  />
-                  <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[ -4px_0_6px_0_#E8F4F7 ]">
-                    @mediversal.in
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="mb-6">
-                <div className="flex">
-                  <div className="flex items-center px-3 py-2 bg-gray-50 text-[#0088B1] font-medium border border-[#E5E8E9] border-r-0">
-                    +91
+            {!isOtpVerified ? (
+              <>
+                {/* Email or Mobile Input */}
+                {!showOtpInput &&
+                  (loginMethod === "email" ? (
+                    <div className="mb-6">
+                      <div className="flex">
+                        <input
+                          type="text"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                          placeholder="Enter your official email"
+                        />
+                        <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[ -4px_0_6px_0_#E8F4F7 ]">
+                          @mediversal.in
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mb-6">
+                      <div className="flex">
+                        <div className="flex items-center px-3 py-2 bg-gray-50 text-[#0088B1] font-medium border border-[#E5E8E9] border-r-0">
+                          +91
+                        </div>
+                        <input
+                          type="tel"
+                          id="mobile"
+                          name="mobile"
+                          value={formData.mobile}
+                          onChange={handleInputChange}
+                          className="w-full p-2 border border-[#E5E8E9] border-l-0 rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                          placeholder="Enter your mobile number"
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                {/* OTP Input */}
+                {showOtpInput && (
+                  <div className="flex justify-between mb-4">
+                    {otp.map((value, index) => (
+                      <input
+                        key={index}
+                        id={`otp-${index}`}
+                        type="text"
+                        maxLength={6}
+                        value={value}
+                        onChange={(e) => handleOtpChange(e.target.value, index)}
+                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                        className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#B3B3B3]"
+                      />
+                    ))}
                   </div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* New Password Fields */}
+                <div className="mb-6">
                   <input
-                    type="tel"
-                    id="mobile"
-                    name="mobile"
-                    value={formData.mobile}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border border-[#E5E8E9] border-l-0 rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
-                    placeholder="Enter your mobile number"
+                    type="password"
+                    name="newPassword"
+                    placeholder="Enter new password"
+                    className="w-full p-3 border border-[#E5E8E9] rounded focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                   />
                 </div>
-              </div>
-            )}
-            {showOtpInput && (
-              <div className="flex justify-between  mb-4">
-                {otp.map((value, index) => (
+                <div className="mb-6">
                   <input
-                    key={index}
-                    id={`otp-${index}`}
-                    type="text"
-                    maxLength={6}
-                    value={value}
-                    onChange={(e) => handleOtpChange(e.target.value, index)}
-                    onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                    className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#B3B3B3]"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm new password"
+                    className="w-full p-3 border border-[#E5E8E9] rounded focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                   />
-                ))}
-              </div>
+                </div>
+              </>
             )}
 
             {/* Submit Button */}
-            <div className="mb-6">
+            <div className="mb-6 mt-4">
               <button
                 type="submit"
-                className="w-full bg-[#0088B1] text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors"
+                className="w-full bg-[#0088B1] mt-9 text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors"
               >
-                Verify OTP
+                {isOtpVerified
+                  ? "Save Password"
+                  : showOtpInput
+                  ? "Verify OTP"
+                  : "Send OTP"}
               </button>
             </div>
           </form>
@@ -212,4 +268,5 @@ export default function ForgetPasswordComponent() {
       </div>
     </div>
   );
-}
+};
+export default ForgetPasswordComponent;

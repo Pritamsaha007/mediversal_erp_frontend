@@ -5,7 +5,13 @@ import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
 import Link from "next/link";
 
-export default function LoginComponent() {
+type LoginComponentProps = {
+  onForgotPassword: () => void;
+};
+
+const LoginComponent: React.FC<LoginComponentProps> = ({
+  onForgotPassword,
+}) => {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<string>("email");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -59,7 +65,18 @@ export default function LoginComponent() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Prevent domain input in email field
+    if (name === "email") {
+      const usernameOnly = value.split("@")[0];
+      setFormData((prev) => ({ ...prev, [name]: usernameOnly }));
+    } else if (name === "mobile") {
+      if (/^\d*$/.test(value)) {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -142,7 +159,6 @@ export default function LoginComponent() {
               }}
             >
               <ArrowLeft className="mr-2" size={18} />
-              Back
             </button>
             <div>{currentDateTime}</div>
           </>
@@ -235,12 +251,9 @@ export default function LoginComponent() {
                 </div>
 
                 <div className="flex justify-end mb-6">
-                  <Link
-                    href="/forget-password"
-                    className="text-sm text-black hover:underline"
-                  >
-                    Forgot Password?
-                  </Link>
+                  <button onClick={onForgotPassword} className="text-[#000000]">
+                    Forgot Password
+                  </button>
                 </div>
               </>
             ) : (
@@ -310,4 +323,5 @@ export default function LoginComponent() {
       </div>
     </div>
   );
-}
+};
+export default LoginComponent;
