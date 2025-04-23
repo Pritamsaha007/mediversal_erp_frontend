@@ -124,7 +124,7 @@ export default function ForgetPasswordComponent() {
       {/* Center Card */}
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
-          <h1 className="text-[#0088B1] text-2xl font-bold text-left mb-10">
+          <h1 className="text-[#0088B1] text-3xl font-bold text-left mb-10">
             Forget Password
           </h1>
 
