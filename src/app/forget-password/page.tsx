@@ -1,117 +1,98 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import LoginToggle from "../components/ui/Toggle";
-import { useRouter } from "next/navigation";
+import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
+import React from "react";
+import Image from "next/image";
+import MainImg from "../auth/assests/svgs/Doctors-cuate 1.svg";
+import MainMediversalLogo from "../auth/assests/svgs/Mediversal FLogo - Color 1.svg";
+import MediversaLMaatriLogo from "../auth/assests/svgs/Mediversal Maatri.svg";
+import MediversalHealthStudio1 from "../auth/assests/svgs/Mediversal Health Studio.svg";
+import Vector1 from "../auth/assests/svgs/Vector 1.svg";
+import Vector2 from "../auth/assests/svgs/Vector 2.svg";
 
-export default function ForgetPasswordComponent() {
-  const [loginMethod, setLoginMethod] = useState<string>("email");
-  const [inputValue, setInputValue] = useState<string>("");
-  const router = useRouter();
-
-  const loginOptions = [
-    { id: "email", label: "Email" },
-    { id: "mobile", label: "Mobile" },
-  ];
-
-  const handleLoginToggle = (selectedId: string) => {
-    setLoginMethod(selectedId);
-    setInputValue("");
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Forget Password Request for:", {
-      type: loginMethod,
-      value: inputValue,
-    });
-  };
-
+export default function ForgetPasswordPage() {
   return (
-    <div className="relative min-h-screen bg-white flex flex-col justify-between">
-      {/* Top Back Button */}
-      <div className="absolute top-4 left-6 right-6 flex justify-between items-center text-sm text-gray-600 pt-14">
-        <button
-          type="button"
-          className="flex items-center text-[#0088B1] font-medium"
-          onClick={() => router.push("/login")}
-        >
-          <ArrowLeft className="mr-2" size={18} />
-          Back to Login
-        </button>
-      </div>
+    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
+      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center text-center p-4 lg:p-8 relative overflow-hidden">
+        <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 text-black z-10">
+          Welcome to the
+        </h3>
+        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold mb-2 text-[#0088B1]">
+          Mediversal Healthcare
+        </h1>
+        <h3 className="text-lg sm:text-xl lg:text-2xl mb-4 text-black z-10">
+          ERP One
+        </h3>
 
-      {/* Center Card */}
-      <div className="flex justify-center items-center flex-1 mt-16">
-        <div className="bg-white w-[550px] p-14 rounded">
-          <h1 className="text-[#0088B1] text-2xl font-bold text-left mb-10">
-            Forgot Password
-          </h1>
+        <div className="w-full max-w-md lg:max-w-lg z-10 my-4">
+          <Image
+            src={MainImg}
+            alt="Doctor Illustration"
+            width={400}
+            height={400}
+            className="w-full max-w-sm mx-auto"
+          />
+        </div>
 
-          <div className="mb-6 w-full">
-            <LoginToggle
-              options={loginOptions}
-              defaultSelected="email"
-              onToggle={handleLoginToggle}
+        <h3 className="text-lg lg:text-2xl mb-4 text-black z-10">Our units</h3>
+        <div className="flex flex-wrap justify-center items-center gap-4 px-4 z-10 mb-8">
+          <div className="w-1/5 max-w-xs">
+            <Image
+              src={MainMediversalLogo}
+              alt="Mediversal Logo"
+              width={100}
+              height={100}
+              className="w-full"
             />
           </div>
+          <div className="w-1/5 max-w-xs">
+            <Image
+              src={MediversaLMaatriLogo}
+              alt="Mediversal Maatri Logo"
+              width={100}
+              height={100}
+              className="w-full"
+            />
+          </div>
+          <div className="w-1/5 max-w-xs">
+            <Image
+              src={MediversalHealthStudio1}
+              alt="Mediversal Health Studio"
+              width={100}
+              height={100}
+              className="w-full"
+            />
+          </div>
+          <div className="w-1/5 max-w-xs">
+            <Image
+              src={MediversalHealthStudio1}
+              alt="Mediversal Health Studio"
+              width={100}
+              height={100}
+              className="w-full"
+            />
+          </div>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <div className="flex">
-                {loginMethod === "email" ? (
-                  <>
-                    <input
-                      type="text"
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
-                      placeholder="Enter your official email"
-                    />
-                    <span className="bg-gray-100 text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-md">
-                      @mediversal.in
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center px-3 py-2 bg-gray-50 text-[#0088B1] font-medium border border-[#E5E8E9] border-r-0">
-                      +91
-                    </div>
-                    <input
-                      type="tel"
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-[#E5E8E9] border-l-0 rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
-                      placeholder="Enter your mobile number"
-                    />
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <button
-                type="submit"
-                className="w-full bg-[#0088B1] text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors"
-              >
-                Send Reset Link / OTP
-              </button>
-            </div>
-          </form>
+        <div className="absolute bottom-0 left-0 w-full">
+          <Image
+            src={Vector1}
+            alt="Vector 1"
+            width={1500}
+            height={250}
+            className="w-full h-32 sm:h-48 lg:h-64 object-cover"
+          />
+        </div>
+        <div className="absolute bottom-0 left-0 w-full">
+          <Image
+            src={Vector2}
+            alt="Vector 2"
+            width={1500}
+            height={320}
+            className="w-full h-40 sm:h-56 lg:h-80 object-cover"
+          />
         </div>
       </div>
-
-      {/* Bottom Accreditation */}
-      <div className="text-center mb-20">
-        <p className="text-sm text-[#000000] mb-2">Accredited by</p>
-        <div className="flex justify-center gap-4">
-          <img src="/image/NABH.svg" alt="NABH" width={50} height={50} />
-          <img src="/image/NABL.svg" alt="NABL" width={50} height={50} />
-        </div>
+      <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl">
+        <ForgetPasswordComponent />{" "}
       </div>
     </div>
   );

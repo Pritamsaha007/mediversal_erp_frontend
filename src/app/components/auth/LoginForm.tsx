@@ -4,10 +4,10 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
 import Link from "next/link";
-import { useAuthStore } from "../../../../store/loginStore";
-import axios from "axios";
+import { useAuthStore } from "../../store/loginStore";
+import { authService } from "../../services/api";
 import { useRouter } from "next/navigation";
-const API_BASE_URL = "http://13.235.51.113:3000/api";
+import { toast } from "react-hot-toast";
 
 export default function LoginComponent() {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
@@ -17,17 +17,10 @@ export default function LoginComponent() {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(50);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { setLoginDetails, email, phoneNo, password } = useAuthStore();
-
-  const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
   const router = useRouter();
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (showOtpInput && timer > 0) {
@@ -55,9 +48,8 @@ export default function LoginComponent() {
   }, []);
 
   useEffect(() => {
-    // Update login method in the store when it changes
     setLoginDetails(email, phoneNo, password, loginMethod);
-  }, [loginMethod]);
+  }, [email, phoneNo, password, setLoginDetails, loginMethod]);
 
   const loginOptions = [
     { id: "email", label: "Email" },
@@ -93,11 +85,10 @@ export default function LoginComponent() {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const identifier = getIdentifier();
-
+      console.log(identifier, password, loginMethod);
       if (!identifier) {
         throw new Error(
           `Please enter your ${
@@ -110,32 +101,32 @@ export default function LoginComponent() {
         throw new Error("Please enter your password");
       }
 
-      const response = await api.post("/login", {
+      const response = await authService.login(
         identifier,
         password,
-        method: loginMethod,
-      });
+        loginMethod
+      );
 
       if (response.data.success) {
         console.log("Login successful, OTP sent:", response.data);
+        toast.success("OTP sent successfully!");
         setShowOtpInput(true);
         setTimer(50);
-      } else {
-        setError(response.data.message || "Login failed. Please try again.");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error during login:", error);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message || "Login failed. Please try again."
-        );
-      } else {
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Something went wrong. Please try again."
-        );
+
+      let errorMsg = "Login failed. Please try again.";
+
+      if (typeof error === "object" && error !== null) {
+        const err = error as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        errorMsg = err.response?.data?.message || err.message || errorMsg;
       }
+
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -143,11 +134,10 @@ export default function LoginComponent() {
 
   const handleVerifyOtp = async () => {
     setIsLoading(true);
-    setError(null);
 
     const otpValue = otp.join("");
     if (otpValue.length !== 6) {
-      setError("Please enter a valid 6-digit OTP");
+      toast.error("Please enter a valid 6-digit OTP");
       setIsLoading(false);
       return;
     }
@@ -155,34 +145,34 @@ export default function LoginComponent() {
     try {
       const identifier = getIdentifier();
 
-      const response = await api.post("/verify-otp", {
+      const response = await authService.verifyOtp(
         identifier,
-        otp: otpValue,
-        method: loginMethod,
-      });
+        otpValue,
+        loginMethod
+      );
 
       if (response.data.success) {
         console.log("OTP verified successfully:", response.data);
-
+        toast.success("OTP verified successfully!");
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
         }
         router.push("/unitselection");
-      } else {
-        setError(response.data.message || "Invalid OTP. Please try again.");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error during OTP verification:", error);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message ||
-            "OTP verification failed. Please try again."
-        );
-      } else {
-        setError(
-          "Something went wrong during OTP verification. Please try again."
-        );
+
+      let errorMsg = "OTP verification failed. Please try again.";
+
+      if (typeof error === "object" && error !== null) {
+        const err = error as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        errorMsg = err.response?.data?.message || err.message || errorMsg;
       }
+
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -201,35 +191,35 @@ export default function LoginComponent() {
     if (timer > 0) return;
 
     setIsLoading(true);
-    setError(null);
 
     try {
       const identifier = getIdentifier();
 
-      const response = await api.post("/login", {
+      const response = await authService.login(
         identifier,
         password,
-        method: loginMethod,
-      });
+        loginMethod
+      );
 
       if (response.data.success) {
         console.log("OTP resent successfully:", response.data);
+        toast.success("OTP sent successfully!");
         setTimer(50);
-      } else {
-        setError(
-          response.data.message || "Failed to resend OTP. Please try again."
-        );
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error resending OTP:", error);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message ||
-            "Failed to resend OTP. Please try again."
-        );
-      } else {
-        setError("Something went wrong. Please try again.");
+
+      let errorMsg = "Failed to resend OTP. Please try again.";
+
+      if (typeof error === "object" && error !== null) {
+        const err = error as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        errorMsg = err.response?.data?.message || err.message || errorMsg;
       }
+
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -290,7 +280,6 @@ export default function LoginComponent() {
             onClick={() => {
               setShowOtpInput(false);
               setOtp(["", "", "", "", "", ""]);
-              setError(null);
             }}
           >
             <ArrowLeft className="mr-2" size={18} />
@@ -302,8 +291,8 @@ export default function LoginComponent() {
 
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
-          <h1 className="text-[#0088B1] text-2xl font-bold text-left mb-10">
-            Login
+          <h1 className="text-[#0088B1] text-3xl font-bold text-left mb-10 font-zak">
+            {showOtpInput ? "Login" : "Login"}
           </h1>
 
           {!showOtpInput && (
@@ -313,12 +302,6 @@ export default function LoginComponent() {
                 defaultSelected="email"
                 onToggle={handleLoginToggle}
               />
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded">
-              {error}
             </div>
           )}
 
@@ -337,7 +320,7 @@ export default function LoginComponent() {
                         className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                         placeholder="Enter your official email"
                       />
-                      <span className="bg-gray-100 text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-md">
+                      <span className="bg-gray-100 text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-md shadow-[#E8F4F7">
                         @mediversal.in
                       </span>
                     </div>
