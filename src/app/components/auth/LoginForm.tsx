@@ -163,6 +163,14 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         }
         router.push("/unitselection");
       }
+      if (
+        !response.data.success &&
+        response.data.message?.includes("password has expired")
+      ) {
+        toast.error(response.data.message);
+        router.push("/auth/loginScreen?forgot=true");
+        return;
+      }
     } catch (error: unknown) {
       console.error("Error during OTP verification:", error);
 

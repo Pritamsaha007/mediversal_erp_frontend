@@ -8,10 +8,12 @@ import { toast } from "react-hot-toast"; // Assuming you're using react-hot-toas
 
 type ForgetPasswordComponentProps = {
   onBackToLogin: () => void;
+  isPasswordExpired?: boolean;
 };
 
 const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
   onBackToLogin,
+  isPasswordExpired = false,
 }) => {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -263,7 +265,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
           <h1 className="text-[#0088B1] text-[40px] font-bold text-left mb-10">
-            Forget Password
+            {isPasswordExpired ? "Reset Password" : "Forget Password"}
           </h1>
 
           {/* Toggle */}

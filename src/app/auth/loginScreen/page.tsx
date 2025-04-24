@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import MainImg from "../assests/svgs/Doctors-cuate 1.svg";
 import MainMediversalLogo from "../assests/svgs/Mediversal FLogo - Color 1.svg";
@@ -9,8 +9,20 @@ import Vector1 from "../assests/svgs/Vector 1.svg";
 import Vector2 from "../assests/svgs/Vector 2.svg";
 import LoginComponent from "@/app/components/auth/LoginForm";
 import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
+import { useSearchParams } from "next/navigation";
 export default function LoginScreen() {
+  const searchParams = useSearchParams();
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isPasswordExpired, setIsPasswordExpired] = useState(false);
+  useEffect(() => {
+    const forgot = searchParams.get("forgot");
+    const expired = searchParams.get("expired");
+
+    if (forgot === "true") {
+      setIsForgotPassword(true);
+      setIsPasswordExpired(expired === "true");
+    }
+  }, [searchParams]);
   return (
     <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center text-center p-4 lg:p-8 relative overflow-hidden">
@@ -96,7 +108,11 @@ export default function LoginScreen() {
       <div className="w-full lg:w-2/5 flex items-center justify-center p-4 lg:p-8 bg-[#FFFFFF] border-l-0 rounded-l-4xl">
         {isForgotPassword ? (
           <ForgetPasswordComponent
-            onBackToLogin={() => setIsForgotPassword(false)}
+            onBackToLogin={() => {
+              setIsForgotPassword(false);
+              setIsPasswordExpired(false);
+            }}
+            isPasswordExpired={isPasswordExpired}
           />
         ) : (
           <LoginComponent onForgotPassword={() => setIsForgotPassword(true)} />
