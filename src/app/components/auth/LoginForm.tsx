@@ -116,6 +116,20 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         toast.success("OTP sent successfully!");
         setShowOtpInput(true);
         setTimer(50);
+      } else {
+        // Check if account is locked
+        if (
+          response.data.message ===
+          "Account is locked due to too many failed attempts."
+        ) {
+          toast.error(
+            "Your account is locked. Please contact the administrator."
+          );
+        } else {
+          toast.error(
+            response.data.message || "Login failed. Please try again."
+          );
+        }
       }
     } catch (error: unknown) {
       console.error("Error during login:", error);
@@ -162,6 +176,14 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
           localStorage.setItem("token", response.data.token);
         }
         router.push("/unitselection");
+      }
+      if (
+        !response.data.success &&
+        response.data.message?.includes("password has expired")
+      ) {
+        toast.error(response.data.message);
+        router.push("/auth/loginScreen?forgot=true");
+        return;
       }
     } catch (error: unknown) {
       console.error("Error during OTP verification:", error);

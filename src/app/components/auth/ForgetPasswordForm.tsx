@@ -2,27 +2,34 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoginToggle from "../ui/Toggle";
-// import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { authService } from "@/app/services/api";
+import { toast } from "react-hot-toast"; // Assuming you're using react-hot-toast for notifications
 
 type ForgetPasswordComponentProps = {
   onBackToLogin: () => void;
+  isPasswordExpired?: boolean;
 };
 
 const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
   onBackToLogin,
+  isPasswordExpired = false,
 }) => {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [loginMethod, setLoginMethod] = useState<string>("email");
   const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     mobile: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  // const router = useRouter();
+  // Password validation regex
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -50,6 +57,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
   const handleLoginToggle = (selectedId: string) => {
     setLoginMethod(selectedId);
   };
+
   const handleOtpChange = (value: string, index: number) => {
     if (/^\d*$/.test(value)) {
       const newOtp = [...otp];
@@ -79,20 +87,128 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getIdentifier = () => {
+    return loginMethod === "email"
+      ? `${formData.email}@mediversal.in`
+      : formData.mobile;
+  };
+
+  const validatePassword = () => {
+    const { newPassword, confirmPassword } = formData;
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+
+    if (!passwordRegex.test(newPassword)) {
+      // Show specific errors through toast messages
+      if (newPassword.length < 8) {
+        toast.error("Password must be at least 8 characters long");
+      } else if (!/[a-z]/.test(newPassword)) {
+        toast.error("Password must contain at least one lowercase letter");
+      } else if (!/[A-Z]/.test(newPassword)) {
+        toast.error("Password must contain at least one uppercase letter");
+      } else if (!/\d/.test(newPassword)) {
+        toast.error("Password must contain at least one number");
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!showOtpInput) {
-      // Step 1: Send OTP
-      console.log("Sending OTP to:", formData);
-      setShowOtpInput(true);
-    } else if (!isOtpVerified) {
-      // Step 2: Verify OTP (mock verification)
-      console.log("Verifying OTP:", otp.join(""));
-      setIsOtpVerified(true);
-    } else {
-      // Step 3: Save new password
-      console.log("Saving new password");
-      // Add actual API call here
+
+    try {
+      if (!showOtpInput) {
+        // Validate email or mobile before sending OTP
+        if (loginMethod === "email" && !formData.email.trim()) {
+          toast.error("Please enter your email");
+          return;
+        } else if (
+          loginMethod === "mobile" &&
+          (!formData.mobile.trim() || formData.mobile.length !== 10)
+        ) {
+          toast.error("Please enter a valid 10-digit mobile number");
+          return;
+        }
+
+        setIsLoading(true);
+        // Step 1: Send OTP
+        const identifier = getIdentifier();
+        const response = await authService.forgotPassword(
+          identifier,
+          loginMethod
+        );
+
+        if (response.status === 200) {
+          toast.success(
+            "OTP sent successfully! Please check your " +
+              (loginMethod === "email" ? "email" : "phone")
+          );
+          setShowOtpInput(true);
+        }
+      } else if (!isOtpVerified) {
+        // Validate OTP before verification
+        const otpString = otp.join("");
+        if (otpString.length !== 6) {
+          toast.error("Please enter a valid 6-digit OTP");
+          return;
+        }
+
+        setIsLoading(true);
+        // Step 2: Verify OTP
+        const identifier = getIdentifier();
+        const response = await authService.verifyResetOtp(
+          identifier,
+          otpString,
+          loginMethod
+        );
+
+        if (response.status === 200) {
+          toast.success("OTP verified successfully!");
+          setIsOtpVerified(true);
+        }
+      } else {
+        // Validate password before resetting
+        if (!validatePassword()) {
+          return;
+        }
+
+        setIsLoading(true);
+        // Step 3: Reset password
+        const identifier = getIdentifier();
+        const response = await authService.resetPassword(
+          identifier,
+          formData.newPassword,
+          loginMethod
+        );
+
+        if (response.status === 200) {
+          toast.success("Password reset successfully!");
+          // Redirect to login page after successful reset
+          setTimeout(() => {
+            onBackToLogin();
+          }, 1500);
+        }
+      }
+    } catch (error: unknown) {
+      console.error("Error:", error);
+
+      let errorMsg = "Something went wrong. Please try again.";
+      if (typeof error === "object" && error !== null) {
+        const err = error as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        errorMsg = err.response?.data?.message || err.message || errorMsg;
+      }
+
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -149,7 +265,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
       <div className="flex justify-center items-center flex-1 mt-16">
         <div className="bg-white w-[550px] p-14 rounded">
           <h1 className="text-[#0088B1] text-[40px] font-bold text-left mb-10">
-            Forget Password
+            {isPasswordExpired ? "Reset Password" : "Forget Password"}
           </h1>
 
           {/* Toggle */}
@@ -178,8 +294,9 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
                           onChange={handleInputChange}
                           className="w-full p-2 border border-[#E5E8E9] rounded-l focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                           placeholder="Enter your official email"
+                          required
                         />
-                        <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[ -4px_0_6px_0_#E8F4F7 ]">
+                        <span className="bg-[#E8F4F7] text-[#0088B1] p-2 border border-[#E5E8E9] border-l-0 rounded-r shadow-[-4px_0_6px_0_#E8F4F7]">
                           @mediversal.in
                         </span>
                       </div>
@@ -198,6 +315,9 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
                           onChange={handleInputChange}
                           className="w-full p-2 border border-[#E5E8E9] border-l-0 rounded-r focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
                           placeholder="Enter your mobile number"
+                          required
+                          maxLength={10}
+                          minLength={10}
                         />
                       </div>
                     </div>
@@ -205,20 +325,51 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
 
                 {/* OTP Input */}
                 {showOtpInput && (
-                  <div className="flex justify-between mb-4">
-                    {otp.map((value, index) => (
-                      <input
-                        key={index}
-                        id={`otp-${index}`}
-                        type="text"
-                        maxLength={6}
-                        value={value}
-                        onChange={(e) => handleOtpChange(e.target.value, index)}
-                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                        className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#B3B3B3]"
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <div className="flex justify-between mb-4">
+                      {otp.map((value, index) => (
+                        <input
+                          key={index}
+                          id={`otp-${index}`}
+                          type="text"
+                          maxLength={6}
+                          value={value}
+                          onChange={(e) =>
+                            handleOtpChange(e.target.value, index)
+                          }
+                          onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                          className="w-12 h-12 border border-[#D1D1D1] rounded text-center text-lg focus:outline-none focus:border-[#0088B1] text-[#161D1F]"
+                        />
+                      ))}
+                    </div>
+                    <div className="text-center mt-3 mb-5">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const identifier = getIdentifier();
+                            setIsLoading(true);
+                            await authService.forgotPassword(
+                              identifier,
+                              loginMethod
+                            );
+                            toast.success("OTP resent successfully!");
+                          } catch (error) {
+                            console.error("Failed to resend OTP:", error);
+                            toast.error(
+                              "Failed to resend OTP. Please try again."
+                            );
+                          } finally {
+                            setIsLoading(false);
+                          }
+                        }}
+                        className="text-[#0088B1] text-sm font-medium"
+                        disabled={isLoading}
+                      >
+                        Resend OTP
+                      </button>
+                    </div>
+                  </>
                 )}
               </>
             ) : (
@@ -228,17 +379,31 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
                   <input
                     type="password"
                     name="newPassword"
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
                     placeholder="Enter new password"
                     className="w-full p-3 border border-[#E5E8E9] rounded focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                    required
                   />
                 </div>
-                <div className="mb-6">
+                <div className="mb-3">
                   <input
                     type="password"
                     name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
                     placeholder="Confirm new password"
                     className="w-full p-3 border border-[#E5E8E9] rounded focus:outline-none focus:border-[#0088B1] bg-[#F8F8F8] text-[#161D1F]"
+                    required
                   />
+                </div>
+
+                {/* Password hint - no validation UI, just a hint */}
+                <div className="mb-4">
+                  <p className="text-sm text-gray-500">
+                    Password must be at least 8 characters with uppercase,
+                    lowercase, and number
+                  </p>
                 </div>
               </>
             )}
@@ -247,9 +412,12 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
             <div className="mb-6 mt-4">
               <button
                 type="submit"
-                className="w-full bg-[#0088B1] mt-9 text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors"
+                className="w-full bg-[#0088B1] mt-9 text-white py-3 px-4 rounded-lg hover:bg-[#006d8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                {isOtpVerified
+                {isLoading
+                  ? "Processing..."
+                  : isOtpVerified
                   ? "Save Password"
                   : showOtpInput
                   ? "Verify OTP"
@@ -269,4 +437,5 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
     </div>
   );
 };
+
 export default ForgetPasswordComponent;
