@@ -7,7 +7,7 @@ import { useAuthStore } from "../../store/loginStore";
 import { authService } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-
+import { useUserAuthStore } from "@/app/store/userAuthSrore";
 type LoginComponentProps = {
   onForgotPassword: () => void;
 };
@@ -21,7 +21,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(50);
   const [isLoading, setIsLoading] = useState(false);
-
+  const setToken = useUserAuthStore((state) => state.setToken);
   const { setLoginDetails, email, phoneNo, password } = useAuthStore();
   const router = useRouter();
 
@@ -149,56 +149,47 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
       setIsLoading(false);
     }
   };
-
   const handleVerifyOtp = async () => {
     setIsLoading(true);
-
     const otpValue = otp.join("");
     if (otpValue.length !== 6) {
       toast.error("Please enter a valid 6-digit OTP");
       setIsLoading(false);
       return;
     }
-
     try {
       const identifier = getIdentifier();
-
       const response = await authService.verifyOtp(
         identifier,
         otpValue,
         loginMethod
       );
-
       if (response.data.success) {
-        console.log("OTP verified successfully:", response.data);
         toast.success("OTP verified successfully!");
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
+        const token = response.data.token;
+        console.log(
+          "OTP verification successful. Response data:",
+          response.data
+        );
+        if (token) {
+          setToken(token); // :white_check_mark: safe now
+          localStorage.setItem("token", token);
+          document.cookie = `token=${token}; path=/; max-age=604800`;
         }
         router.push("/unitselection");
+      } else {
+        if (
+          !response.data.success &&
+          response.data.message?.includes("password has expired")
+        ) {
+          toast.error(response.data.message);
+          router.push("/login?forgot=true");
+          return;
+        }
       }
-      if (
-        !response.data.success &&
-        response.data.message?.includes("password has expired")
-      ) {
-        toast.error(response.data.message);
-        router.push("/auth/loginScreen?forgot=true");
-        return;
-      }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error during OTP verification:", error);
-
-      let errorMsg = "OTP verification failed. Please try again.";
-
-      if (typeof error === "object" && error !== null) {
-        const err = error as {
-          response?: { data?: { message?: string } };
-          message?: string;
-        };
-        errorMsg = err.response?.data?.message || err.message || errorMsg;
-      }
-
-      toast.error(errorMsg);
+      toast.error("OTP verification failed.");
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,7 @@ import MediversalMaatriLogo from "./assests/svgs/Mediversal Maatri.svg";
 import MediversalHealthStudio from "./assests/svgs/Mediversal Health Studio.svg";
 import Vector1 from "./assests/svgs/Vector 1.svg";
 import Vector2 from "./assests/svgs/Vector 2.svg";
+import { logout } from "../utils/logout";
 export default function UnitSelectionScreen() {
   const [dateTime, setDateTime] = useState("");
 
@@ -104,6 +105,12 @@ export default function UnitSelectionScreen() {
             Health Studio
           </h5>
         </div>
+        <button
+          onClick={logout}
+          className="bg-red-300 hover:bg-red-400 text-white font-semibold py-1.5 px-4 rounded-lg shadow-md transition duration-200"
+        >
+          Logout
+        </button>
       </div>
       <div
         className="absolute bottom-0 left-0 w-full"
