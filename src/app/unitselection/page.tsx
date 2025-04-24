@@ -6,8 +6,18 @@ import MediversalMaatriLogo from "./assests/svgs/Mediversal Maatri.svg";
 import MediversalHealthStudio from "./assests/svgs/Mediversal Health Studio.svg";
 import Vector1 from "./assests/svgs/Vector 1.svg";
 import Vector2 from "./assests/svgs/Vector 2.svg";
+import { useRouter } from "next/navigation";
 export default function UnitSelectionScreen() {
   const [dateTime, setDateTime] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -37,6 +47,9 @@ export default function UnitSelectionScreen() {
       <div className="absolute top-4 right-4 text-black font-medium text-sm">
         {dateTime}
       </div>
+      <button className="absolute top-14 right-14 text-black font-medium text-sm">
+        logout
+      </button>
       <div className="text-center mt-20">
         <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 text-black">
           Welcome to the

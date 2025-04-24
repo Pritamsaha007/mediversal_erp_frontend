@@ -32,6 +32,39 @@ export const authService = {
       method,
     });
   },
+  forgotPassword: async (identifier: string | undefined, method: string) => {
+    return api.post("/forgot-password", {
+      identifier,
+      method,
+    });
+  },
+  verifyResetOtp: async (
+    identifier: string | undefined,
+    otp: string,
+    method: string
+  ) => {
+    return api.post("/verify-reset-otp", {
+      identifier,
+      otp,
+      method,
+    });
+  },
+  resetPassword: async (
+    identifier: string | undefined,
+    newPassword: string,
+    method: string
+  ) => {
+    return api.post("/reset-password", {
+      identifier,
+      newPassword,
+      method,
+    });
+  },
+  logout: async (userId: number) => {
+    return api.post("/logout", {
+      userId,
+    });
+  },
 };
 
 export default api;
