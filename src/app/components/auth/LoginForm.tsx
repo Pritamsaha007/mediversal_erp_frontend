@@ -116,6 +116,20 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         toast.success("OTP sent successfully!");
         setShowOtpInput(true);
         setTimer(50);
+      } else {
+        // Check if account is locked
+        if (
+          response.data.message ===
+          "Account is locked due to too many failed attempts."
+        ) {
+          toast.error(
+            "Your account is locked. Please contact the administrator."
+          );
+        } else {
+          toast.error(
+            response.data.message || "Login failed. Please try again."
+          );
+        }
       }
     } catch (error: unknown) {
       console.error("Error during login:", error);
