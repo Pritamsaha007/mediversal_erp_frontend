@@ -2,21 +2,15 @@
 import { useState } from "react";
 import {
   LayoutDashboard,
-  Users,
-  FileText,
-  Calendar,
   Settings,
   ChevronDown,
   ChevronRight,
-  PlusCircle,
-  CreditCard,
   Stethoscope,
-  Pill,
   ClipboardList,
   DollarSign,
   CornerDownRight,
 } from "lucide-react";
-import MainMediversalLogo from "../auth/assests/svgs/Mediversal FLogo - Color 1.svg";
+import MainMediversalLogo from "../login/assests/svgs/Mediversal FLogo - Color 1.svg";
 import Image from "next/image";
 
 interface MenuItem {
