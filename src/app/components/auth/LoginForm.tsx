@@ -454,11 +454,19 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
                   isLoading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
-                {isLoading
-                  ? "Loading..."
-                  : showOtpInput
-                  ? "Verify OTP"
-                  : "Login"}
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="mr-3 size-5 animate-spin"
+                      viewBox="0 0 24 24"
+                    ></svg>
+                    Loading...
+                  </span>
+                ) : showOtpInput ? (
+                  "Verify OTP"
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>
