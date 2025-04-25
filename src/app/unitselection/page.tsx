@@ -6,9 +6,13 @@ import MediversalMaatriLogo from "./assests/svgs/Mediversal Maatri.svg";
 import MediversalHealthStudio from "./assests/svgs/Mediversal Health Studio.svg";
 import Vector1 from "./assests/svgs/Vector 1.svg";
 import Vector2 from "./assests/svgs/Vector 2.svg";
-import { logout } from "../utils/logout";
+import { authService } from "../services/api";
+import { useUserAuthStore } from "../store/userAuthSrore";
+
 export default function UnitSelectionScreen() {
   const [dateTime, setDateTime] = useState("");
+  const { user } = useUserAuthStore();
+  const locationPermission = user?.location_permission || "";
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -33,8 +37,39 @@ export default function UnitSelectionScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  const logout = async () => {
+    try {
+      if (user?.user_id) {
+        await authService.logout(user.user_id);
+      }
+      useUserAuthStore.getState().clearAuth();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const isLocationPermitted = (location: string) => {
+    if (!locationPermission) return false;
+
+    if (locationPermission === "all") return true;
+
+    if (Array.isArray(locationPermission)) {
+      return locationPermission.includes(location);
+    }
+
+    if (typeof locationPermission === "string") {
+      return locationPermission
+        .split(",")
+        .map((loc) => loc.trim())
+        .includes(location);
+    }
+
+    return false;
+  };
+
   return (
-    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col items-center ">
+    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col items-center">
       <div className="absolute top-4 right-4 text-black font-medium text-sm">
         {dateTime}
       </div>
@@ -55,56 +90,94 @@ export default function UnitSelectionScreen() {
       </div>
 
       <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10 mt-10">
-        <div className="flex flex-col items-center w-40">
-          <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
-            <Image
-              src={MainMediversalLogo}
-              alt="Mediversal Logo"
-              width={80}
-              height={80}
-              className="object-contain"
-            />
+        {isLocationPermitted("mediversal_main") && (
+          <div
+            className="flex flex-col items-center w-40"
+            onClick={() => (window.location.href = "/mediversal_main")}
+          >
+            <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
+              <Image
+                src={MainMediversalLogo}
+                alt="Mediversal Logo"
+                width={80}
+                height={80}
+                className="object-contain"
+              />
+            </div>
+            <h5 className="text-[#0088B1] text-sm text-center font-medium">
+              Mediversal
+              <br />
+              Main
+            </h5>
           </div>
-          <h5 className="text-[#0088B1] text-sm text-center font-medium">
-            Mediversal
-            <br />
-            Main
-          </h5>
-        </div>
+        )}
 
-        <div className="flex flex-col items-center w-40">
-          <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
-            <Image
-              src={MediversalMaatriLogo}
-              alt="Mediversal Maatri Logo"
-              width={50}
-              height={50}
-              className="object-contain"
-            />
+        {isLocationPermitted("mediversal_maatri") && (
+          <div className="flex flex-col items-center w-40">
+            <div
+              className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20"
+              onClick={() => (window.location.href = "/mediversal_maatri")}
+            >
+              <Image
+                src={MediversalMaatriLogo}
+                alt="Mediversal Maatri Logo"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </div>
+            <h5 className="text-[#0088B1] text-sm text-center font-medium">
+              Mediversal
+              <br />
+              Maatri
+            </h5>
           </div>
-          <h5 className="text-[#0088B1] text-sm text-center font-medium">
-            Mediversal
-            <br />
-            Maatri
-          </h5>
-        </div>
+        )}
 
-        <div className="flex flex-col items-center w-40">
-          <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
-            <Image
-              src={MediversalHealthStudio}
-              alt="Mediversal Health Studio"
-              width={50}
-              height={50}
-              className="object-contain"
-            />
+        {isLocationPermitted("mediversal_health_studio") && (
+          <div className="flex flex-col items-center w-40">
+            <div
+              className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20"
+              onClick={() => (window.location.href = "/health_studio")}
+            >
+              <Image
+                src={MediversalHealthStudio}
+                alt="Mediversal Health Studio"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </div>
+            <h5 className="text-[#0088B1] text-sm text-center font-medium">
+              Mediversal
+              <br />
+              Health Studio
+            </h5>
           </div>
-          <h5 className="text-[#0088B1] text-sm text-center font-medium">
-            Mediversal
-            <br />
-            Health Studio
-          </h5>
-        </div>
+        )}
+
+        {isLocationPermitted("Mediversal_begusarai") && (
+          <div
+            className="flex flex-col items-center w-40"
+            onClick={() => (window.location.href = "/mediversal_begusarai")}
+          >
+            <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
+              <Image
+                src={MainMediversalLogo}
+                alt="Mediversal Logo"
+                width={80}
+                height={80}
+                className="object-contain"
+              />
+            </div>
+            <h5 className="text-[#0088B1] text-sm text-center font-medium">
+              Mediversal
+              <br />
+              Begusarai
+            </h5>
+          </div>
+        )}
+
         <button
           onClick={logout}
           className="bg-red-300 hover:bg-red-400 text-white font-semibold py-1.5 px-4 rounded-lg shadow-md transition duration-200"

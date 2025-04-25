@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import MainImg from "../auth/assests/svgs/Doctors-cuate 1.svg";
-import MainMediversalLogo from "../auth/assests/svgs/Mediversal FLogo - Color 1.svg";
-import MediversaLMaatriLogo from "../auth/assests/svgs/Mediversal Maatri.svg";
-import MediversalHealthStudio1 from "../auth/assests/svgs/Mediversal Health Studio.svg";
-import Vector1 from "../auth/assests/svgs/Vector 1.svg";
-import Vector2 from "../auth/assests/svgs/Vector 2.svg";
+import MainImg from "./assests/svgs/Doctors-cuate 1.svg";
+import MainMediversalLogo from "./assests/svgs/Mediversal FLogo - Color 1.svg";
+import MediversaLMaatriLogo from "./assests/svgs/Mediversal Maatri.svg";
+import MediversalHealthStudio1 from "./assests/svgs/Mediversal Health Studio.svg";
+import Vector1 from "./assests/svgs/Vector 1.svg";
+import Vector2 from "./assests/svgs/Vector 2.svg";
 import LoginComponent from "@/app/components/auth/LoginForm";
 import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
 
@@ -26,7 +26,7 @@ export default function LoginScreen() {
     }
   }, []);
   return (
-    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
+    <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row overflow-hidden">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center text-center p-4 lg:p-8 relative overflow-hidden">
         <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 text-black z-10">
           Welcome to the
@@ -88,22 +88,24 @@ export default function LoginScreen() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="absolute bottom-0 left-0 w-full h-auto overflow-hidden pointer-events-none z-0">
           <Image
             src={Vector1}
             alt="Vector 1"
+            layout="responsive"
             width={1500}
             height={250}
-            className="w-full h-32 sm:h-48 lg:h-64 object-cover"
+            className="w-full object-cover"
           />
         </div>
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="absolute bottom-0 left-0 w-full h-auto overflow-hidden pointer-events-none z-0">
           <Image
             src={Vector2}
             alt="Vector 2"
+            layout="responsive"
             width={1500}
             height={320}
-            className="w-full h-40 sm:h-56 lg:h-80 object-cover"
+            className="w-full object-cover"
           />
         </div>
       </div>

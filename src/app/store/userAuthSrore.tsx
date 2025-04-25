@@ -1,56 +1,40 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-// Define the full type
-interface AuthState {
-  email: string;
-  phoneNo?: string;
-  password: string;
-  method: string;
+import { User } from "../types/index";
+
+interface UserAuthState {
   token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
-  setLoginDetails: (
-    email: string,
-    phoneNo?: string,
-    password?: string,
-    method?: string
-  ) => void;
   setToken: (token: string) => void;
+  setUser: (user: User) => void;
   clearAuth: () => void;
 }
-// Zustand store with persist to keep auth across refreshes
-export const useUserAuthStore = create<AuthState>()(
+
+export const useUserAuthStore = create<UserAuthState>()(
   persist(
     (set) => ({
-      email: "",
-      phoneNo: undefined,
-      password: "",
-      method: "",
       token: null,
+      user: null,
       isAuthenticated: false,
-      setLoginDetails: (email, phoneNo, password = "", method = "") =>
-        set({
-          email: email ?? "",
-          phoneNo: phoneNo ?? undefined,
-          password,
-          method,
-        }),
       setToken: (token) =>
         set({
           token,
           isAuthenticated: true,
         }),
+      setUser: (user) =>
+        set({
+          user,
+        }),
       clearAuth: () =>
         set({
-          email: "",
-          phoneNo: undefined,
-          password: "",
-          method: "",
           token: null,
+          user: null,
           isAuthenticated: false,
         }),
     }),
     {
-      name: "auth-storage", // localStorage key
+      name: "auth-storage",
     }
   )
 );

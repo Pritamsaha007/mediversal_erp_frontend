@@ -21,7 +21,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(50);
   const [isLoading, setIsLoading] = useState(false);
-  const setToken = useUserAuthStore((state) => state.setToken);
   const { setLoginDetails, email, phoneNo, password } = useAuthStore();
   const router = useRouter();
 
@@ -167,15 +166,22 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
       if (response.data.success) {
         toast.success("OTP verified successfully!");
         const token = response.data.token;
-        console.log(
-          "OTP verification successful. Response data:",
-          response.data
-        );
+        const userData = response.data.user;
+
         if (token) {
-          setToken(token); // :white_check_mark: safe now
+          useUserAuthStore.getState().setToken(token);
           localStorage.setItem("token", token);
           document.cookie = `token=${token}; path=/; max-age=604800`;
         }
+
+        if (userData) {
+          useUserAuthStore.getState().setUser(userData);
+          console.log(
+            "Auth store state after user update:",
+            useUserAuthStore.getState()
+          );
+        }
+
         router.push("/unitselection");
       } else {
         if (
