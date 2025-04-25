@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import MainMediversalLogo from "../auth/assests/svgs/Mediversal FLogo - Color 1.svg";
+import MainMediversalLogo from "../login/assests/svgs/Mediversal FLogo - Color 1.svg";
 
 const MediversalBegusarai = () => {
   return (

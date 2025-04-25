@@ -2,6 +2,7 @@
 import { useUserAuthStore } from "../store/userAuthSrore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 export default function ProtectedRoute({
   children,
 }: {
@@ -9,14 +10,22 @@ export default function ProtectedRoute({
 }) {
   const { isAuthenticated } = useUserAuthStore();
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+
+  // 👇 Add local state to wait for Zustand hydration
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Zustand will hydrate async — wait for one tick
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated && !isAuthenticated) {
       router.replace("/login");
-    } else {
-      setChecked(true);
     }
-  }, [isAuthenticated]);
-  if (!checked) return null;
+  }, [hydrated, isAuthenticated]);
+
+  if (!hydrated) return null;
+
   return <>{children}</>;
 }

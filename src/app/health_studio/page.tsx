@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import MediversalHealthStudio1 from "../auth/assests/svgs/Mediversal Health Studio.svg";
+import MediversalHealthStudio1 from "../login/assests/svgs/Mediversal Health Studio.svg";
 
 const HealthStudio = () => {
   return (
