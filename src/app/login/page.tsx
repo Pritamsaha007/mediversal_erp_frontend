@@ -9,20 +9,21 @@ import Vector1 from "../auth/assests/svgs/Vector 1.svg";
 import Vector2 from "../auth/assests/svgs/Vector 2.svg";
 import LoginComponent from "@/app/components/auth/LoginForm";
 import ForgetPasswordComponent from "@/app/components/auth/ForgetPasswordForm";
-import { useSearchParams } from "next/navigation";
 export default function LoginScreen() {
-  const searchParams = useSearchParams();
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isPasswordExpired, setIsPasswordExpired] = useState(false);
   useEffect(() => {
-    const forgot = searchParams.get("forgot");
-    const expired = searchParams.get("expired");
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const forgot = params.get("forgot");
+      const expired = params.get("expired");
 
-    if (forgot === "true") {
-      setIsForgotPassword(true);
-      setIsPasswordExpired(expired === "true");
+      if (forgot === "true") {
+        setIsForgotPassword(true);
+        setIsPasswordExpired(expired === "true");
+      }
     }
-  }, [searchParams]);
+  }, []);
   return (
     <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col lg:flex-row">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center text-center p-4 lg:p-8 relative overflow-hidden">
