@@ -67,6 +67,7 @@ export default function UnitSelectionScreen() {
 
     return false;
   };
+  console.log("Location Permission:", locationPermission);
 
   return (
     <div className="w-screen h-screen bg-[#E8E8E8] flex flex-col items-center">
@@ -90,7 +91,7 @@ export default function UnitSelectionScreen() {
       </div>
 
       <div className="flex flex-wrap justify-center items-center gap-8 px-4 z-10 mt-10">
-        {isLocationPermitted("mediversal_main") && (
+        {isLocationPermitted("Mediversal_main") && (
           <div
             className="flex flex-col items-center w-40"
             onClick={() => (window.location.href = "/mediversal_main")}
@@ -112,7 +113,7 @@ export default function UnitSelectionScreen() {
           </div>
         )}
 
-        {isLocationPermitted("mediversal_maatri") && (
+        {isLocationPermitted("Mediversal_matri") && (
           <div className="flex flex-col items-center w-40">
             <div
               className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20"
@@ -134,7 +135,7 @@ export default function UnitSelectionScreen() {
           </div>
         )}
 
-        {isLocationPermitted("mediversal_health_studio") && (
+        {isLocationPermitted("Health_studio") && (
           <div className="flex flex-col items-center w-40">
             <div
               className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20"
