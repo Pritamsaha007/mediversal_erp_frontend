@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense } from "react";
-import LoginScreen from "./auth/loginScreen/page";
+import LoginScreen from "../app/login/page";
 import { Toaster } from "react-hot-toast";
 export const dynamic = "force-dynamic";
 
