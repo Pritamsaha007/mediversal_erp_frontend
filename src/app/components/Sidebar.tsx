@@ -2,16 +2,10 @@
 import { useState } from "react";
 import {
   LayoutDashboard,
-  Users,
-  FileText,
-  Calendar,
   Settings,
   ChevronDown,
   ChevronRight,
-  PlusCircle,
-  CreditCard,
   Stethoscope,
-  Pill,
   ClipboardList,
   DollarSign,
   CornerDownRight,
