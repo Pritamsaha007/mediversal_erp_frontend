@@ -2,23 +2,22 @@
 import { useState } from "react";
 import {
   LayoutDashboard,
-  Settings,
-  ChevronDown,
-  ChevronRight,
-  Stethoscope,
-  ClipboardList,
   DollarSign,
   CornerDownRight,
+  ChevronDown,
+  ChevronRight,
+  LucideComputer,
 } from "lucide-react";
 import MainMediversalLogo from "../login/assests/svgs/Mediversal FLogo - Color 1.svg";
 import Image from "next/image";
+import Link from "next/link";
 
 interface MenuItem {
   name: string;
   icon: React.ReactNode;
   subItems?: {
     name: string;
-    icon: React.ReactNode;
+    link: string;
   }[];
 }
 
@@ -32,46 +31,39 @@ const Sidebar = () => {
   const menuItems: MenuItem[] = [
     {
       name: "Front Desk",
-      icon: <LayoutDashboard size={18} />,
+      icon: <LucideComputer size={18} />,
       subItems: [
-        { name: "Patient Search", icon: <CornerDownRight size={16} /> },
-        { name: "Patient Registration", icon: <CornerDownRight size={16} /> },
-        { name: "Appointment", icon: <CornerDownRight size={16} /> },
+        {
+          name: "Patient Search",
+          link: "/dashboard/front-desk/patient-search",
+        },
+        {
+          name: "Patient Registration",
+          link: "/dashboard/front-desk/patient-registration",
+        },
+        { name: "Appointment", link: "/dashboard/front-desk/appointment" },
       ],
     },
     {
       name: "Billing & Cashier",
       icon: <DollarSign size={18} />,
       subItems: [
-        { name: "Create Invoice", icon: <CornerDownRight size={16} /> },
-        { name: "Payment Processing", icon: <CornerDownRight size={16} /> },
-        { name: "Insurance Claims", icon: <CornerDownRight size={16} /> },
-      ],
-    },
-    {
-      name: "Clinical",
-      icon: <Stethoscope size={18} />,
-      subItems: [
-        { name: "Doctor Dashboard", icon: <CornerDownRight size={16} /> },
-        { name: "Prescription", icon: <CornerDownRight size={16} /> },
-        { name: "Medical Records", icon: <CornerDownRight size={16} /> },
-      ],
-    },
-    {
-      name: "Reports",
-      icon: <ClipboardList size={18} />,
-      subItems: [
-        { name: "Financial Reports", icon: <CornerDownRight size={16} /> },
-        { name: "Clinical Reports", icon: <CornerDownRight size={16} /> },
-        { name: "Administrative Reports", icon: <CornerDownRight size={16} /> },
-      ],
-    },
-    {
-      name: "Settings",
-      icon: <Settings size={18} />,
-      subItems: [
-        { name: "User Management", icon: <CornerDownRight size={16} /> },
-        { name: "System Configuration", icon: <CornerDownRight size={16} /> },
+        {
+          name: "Search OPD Receipt",
+          link: "/dashboard/billing/search-opd-receipt",
+        },
+        { name: "Due Payment", link: "/dashboard/billing/due-payment" },
+        { name: "Patient Advance", link: "/dashboard/billing/patient-advance" },
+        { name: "IPD Estimation", link: "/dashboard/billing/ipd-estimation" },
+        { name: "IPD Billing", link: "/dashboard/billing/ipd-billing" },
+        {
+          name: "Hospital Collection User Wise",
+          link: "/dashboard/billing/hospital-collection",
+        },
+        {
+          name: "Admission Advance Report",
+          link: "/dashboard/billing/admission-advance-report",
+        },
       ],
     },
   ];
@@ -118,7 +110,7 @@ const Sidebar = () => {
                 ${
                   selectedMenu === menu.name
                     ? "bg-[#0088B1] text-[#F8F8F8] shadow-sm"
-                    : "bg-white text-[#161D1F]  hover:bg-gray-50"
+                    : "bg-white text-[#161D1F] hover:bg-gray-50"
                 }
                 transition-colors duration-200`}
               onClick={() => toggleMenu(menu.name)}
@@ -154,25 +146,26 @@ const Sidebar = () => {
 
             {/* Sub Menu Items */}
             {openMenu === menu.name && menu.subItems && (
-              <div className=" mt-1 rounded-lg space-y-1 py-1">
+              <div className="mt-1 rounded-lg space-y-1 py-1">
                 {menu.subItems.map((subItem) => (
-                  <div
-                    key={subItem.name}
-                    className={`flex items-center px-4 py-2  cursor-pointer rounded-md mx-2 w-[254px] h-[32px]
+                  <Link href={subItem.link} key={subItem.name}>
+                    <div
+                      className={`flex items-center px-4 py-2 cursor-pointer rounded-md mx-2 w-[254px] h-[32px]
                         ${
                           selectedSubMenu === subItem.name
                             ? "bg-[#D0E8F0] text-[#161D1F] font-medium"
                             : "text-[#161D1F] hover:bg-[#D0E8F0]"
                         }
                         transition-colors duration-200`}
-                    onClick={() => handleSubMenuClick(subItem.name)}
-                  >
-                    <CornerDownRight
-                      size={14}
-                      className="mr-3 text-[#161D1F]"
-                    />
-                    <span className="text-sm">{subItem.name}</span>
-                  </div>
+                      onClick={() => handleSubMenuClick(subItem.name)}
+                    >
+                      <CornerDownRight
+                        size={14}
+                        className="mr-3 text-[#161D1F]"
+                      />
+                      <span className="text-sm">{subItem.name}</span>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}

@@ -1,0 +1,156 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, ChevronDown, Bell, User } from "lucide-react";
+import { format } from "date-fns";
+import Link from "next/link";
+import { useUserAuthStore } from "../store/userAuthSrore";
+import { authService } from "../services/api";
+
+interface HeaderProps {
+  userName?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
+  const [currentDateTime, setCurrentDateTime] = useState({
+    date: "",
+    time: "",
+  });
+  const { user } = useUserAuthStore();
+
+  useEffect(() => {
+    // Initialize date/time
+    updateDateTime();
+
+    // Update time every second
+    const interval = setInterval(() => {
+      updateDateTime();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const updateDateTime = () => {
+    const now = new Date();
+
+    // Format date as DD/MM/YY
+    const dateStr = format(now, "dd/MM/yy");
+
+    // Format time as HH:MM:SS:SS
+    const timeStr = format(now, "HH:mm:ss").substring(0, 11);
+
+    setCurrentDateTime({
+      date: dateStr,
+      time: timeStr,
+    });
+  };
+
+  const logout = async () => {
+    try {
+      if (user?.user_id) {
+        await authService.logout(user.user_id);
+      }
+      useUserAuthStore.getState().clearAuth();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  return (
+    <div className="bg-gray-50  p-4">
+      {/* Main header */}
+      <header className="bg-white px-2 py-2 flex items-center justify-between border rounded-xl my-1">
+        {/* Left section with back button and title */}
+        <div className="flex items-center">
+          <Link href="#">
+            <ArrowLeft size={18} className="mr-4 ml-2" color="#161D1F" />
+          </Link>
+          <h1 className="text-lg font-medium text-[#161D1F] text-[16px]">
+            Patient Registeration
+          </h1>
+        </div>
+
+        {/* Center section with date and time */}
+        <div className="flex items-center text-[#161D1F] text-[12px] ">
+          <span>
+            {currentDateTime.date} | {currentDateTime.time}
+          </span>
+        </div>
+
+        {/* Right section with notification and user profile */}
+        <div className="flex items-center space-x-6">
+          {/* Notification icon */}
+          <button className="relative">
+            <Bell size={18} className="mr-2" color="#161D1F" />
+            <span className="absolute top-0 right-0 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+            </span>
+          </button>
+
+          {/* User dropdown */}
+          <div className="relative">
+            <button
+              className="flex items-center space-x-2 bg-[#0088B1] text-white px-4 py-2 rounded"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center text-white mr-2">
+                <User size={14} />
+              </div>
+              <span>{userName}</span>
+              <ChevronDown size={16} className="ml-1" />
+            </button>
+
+            {/* Dropdown menu */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <ul className="py-1 text-[#161D1F]">
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Settings
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      onClick={logout}
+                    >
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Breadcrumb */}
+      <div className="bg-gray-50 px-2 py-1">
+        <div className="flex items-center text-[10px] text-[#B0B6B8] font-medium">
+          <Link href="#" className="text-[#B0B6B8]">
+            Front Desk
+          </Link>
+          <span className="mx-2 text-gray-400">&gt;</span>
+          <span className="text-[#B0B6B8]">Patient Registration</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Header;
