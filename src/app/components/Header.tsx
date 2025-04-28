@@ -34,8 +34,12 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
 
       return (
         <Fragment key={href}>
-          {index !== 0 && <span className="mx-2 text-gray-400">&gt;</span>}
-          <Link href={href} className="text-[#B0B6B8] text-[10px]">
+          {index !== 0 && (
+            <span className="mx-2 text-[#B0B6B8] text-[12px] font-medium">
+              &gt;
+            </span>
+          )}
+          <Link href={href} className="text-[#B0B6B8] text-[10px] font-medium">
             {label}
           </Link>
         </Fragment>
@@ -166,11 +170,7 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
       </header>
 
       {/* Breadcrumb */}
-      <div className="bg-gray-50 px-2 py-1">
-        <div className="flex items-center text-[10px] text-[#B0B6B8] font-medium">
-          {generateBreadcrumbs()}
-        </div>
-      </div>
+      <div className="bg-gray-50 px-2 py-1">{generateBreadcrumbs()}</div>
     </div>
   );
 };
