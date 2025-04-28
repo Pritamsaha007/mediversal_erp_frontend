@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUserAuthStore } from "../store/userAuthSrore";
 import { authService } from "../services/api";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Fragment } from "react";
 
 interface HeaderProps {
@@ -18,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
     time: "",
   });
   const { user } = useUserAuthStore();
-
+  const router = useRouter(); // <-- inside your component
   const pathname = usePathname();
 
   const generateBreadcrumbs = () => {
@@ -94,9 +95,13 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
       <header className="bg-white px-2 py-2 flex items-center justify-between border rounded-xl my-1">
         {/* Left section with back button and title */}
         <div className="flex items-center">
-          <Link href="#">
-            <ArrowLeft size={18} className="mr-4 ml-2" color="#161D1F" />
-          </Link>
+          <button onClick={() => router.back()}>
+            <ArrowLeft
+              size={18}
+              className="mr-4 ml-2 hove hover:cursor-pointer"
+              color="#161D1F"
+            />
+          </button>
           <h1 className="text-lg font-medium text-[#161D1F] text-[16px]">
             Patient Registeration
           </h1>
