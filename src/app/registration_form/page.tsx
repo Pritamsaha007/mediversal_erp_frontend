@@ -1,9 +1,9 @@
 "use client";
 import { useState, FormEvent, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Step1 from "./account_details/page";
-import Step2 from "./contact_details/page";
-import Step3 from "./billing_details/page";
+import Sidebar from "../components/common/Sidebar";
+import Step1 from "../components/registration_form/account_details";
+import Step2 from "../components/registration_form/contact_details";
+import Step3 from "../components/registration_form/billing_details";
 import { RegistrationFormData } from "../types";
 
 export default function ContactForm() {

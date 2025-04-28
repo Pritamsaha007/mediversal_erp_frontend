@@ -3,7 +3,7 @@ import InputField from "@/app/components/ui/Input";
 import Dropdown from "@/app/components/ui/Dropdown";
 import DOBInput from "@/app/components/ui/DOBInput";
 import Image from "next/image";
-import ProfileDummyImage from "../assets/svgs/image-up.svg";
+import ProfileDummyImage from "./assets/svgs/image-up.svg";
 import { RadioBoxGroup } from "@/app/components/ui/RadioBoxGroup";
 import { RegistrationFormData } from "@/app/types";
 interface Step1Props {
