@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import LoginToggle from "../ui/Toggle";
 import Image from "next/image";
 import { authService } from "@/app/services/api";
-import { toast } from "react-hot-toast"; // Assuming you're using react-hot-toast for notifications
+import { toast } from "react-hot-toast";
 
 type ForgetPasswordComponentProps = {
   onBackToLogin: () => void;
@@ -28,7 +28,6 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
     confirmPassword: "",
   });
 
-  // Password validation regex
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   useEffect(() => {
