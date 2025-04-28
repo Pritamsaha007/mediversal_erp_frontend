@@ -1,3 +1,4 @@
+"use client";
 import React, { InputHTMLAttributes, useState, ChangeEvent } from "react";
 
 interface ValidationRule {
