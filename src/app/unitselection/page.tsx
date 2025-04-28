@@ -94,7 +94,7 @@ export default function UnitSelectionScreen() {
         {isLocationPermitted("Mediversal_main") && (
           <div
             className="flex flex-col items-center w-40"
-            onClick={() => (window.location.href = "/mediversal_main")}
+            onClick={() => (window.location.href = "/dashboard")}
           >
             <div className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20">
               <Image
@@ -117,7 +117,7 @@ export default function UnitSelectionScreen() {
           <div className="flex flex-col items-center w-40">
             <div
               className="bg-white rounded-full shadow-md p-4 mb-3 flex justify-center items-center h-20 w-20"
-              onClick={() => (window.location.href = "/mediversal_maatri")}
+              onClick={() => (window.location.href = "/dashboard")}
             >
               <Image
                 src={MediversalMaatriLogo}

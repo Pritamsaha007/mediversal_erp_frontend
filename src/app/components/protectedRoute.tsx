@@ -23,7 +23,7 @@ export default function ProtectedRoute({
     if (hydrated && !isAuthenticated) {
       router.replace("/login");
     }
-  }, [hydrated, isAuthenticated]);
+  }, [hydrated, isAuthenticated, router]);
 
   if (!hydrated) return null;
 
