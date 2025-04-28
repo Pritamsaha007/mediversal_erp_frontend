@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { useUserAuthStore } from "../store/userAuthSrore";
 import { authService } from "../services/api";
+import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 interface HeaderProps {
   userName?: string;
@@ -16,6 +18,30 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
     time: "",
   });
   const { user } = useUserAuthStore();
+
+  const pathname = usePathname();
+
+  const generateBreadcrumbs = () => {
+    const pathWithoutQuery = pathname.split("?")[0];
+    const pathArray = pathWithoutQuery.split("/").filter((p) => p);
+
+    return pathArray.map((path, index) => {
+      const href = "/" + pathArray.slice(0, index + 1).join("/");
+
+      const label = path
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+
+      return (
+        <Fragment key={href}>
+          {index !== 0 && <span className="mx-2 text-gray-400">&gt;</span>}
+          <Link href={href} className="text-[#B0B6B8] text-[10px]">
+            {label}
+          </Link>
+        </Fragment>
+      );
+    });
+  };
 
   useEffect(() => {
     // Initialize date/time
@@ -142,11 +168,7 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
       {/* Breadcrumb */}
       <div className="bg-gray-50 px-2 py-1">
         <div className="flex items-center text-[10px] text-[#B0B6B8] font-medium">
-          <Link href="#" className="text-[#B0B6B8]">
-            Front Desk
-          </Link>
-          <span className="mx-2 text-gray-400">&gt;</span>
-          <span className="text-[#B0B6B8]">Patient Registration</span>
+          {generateBreadcrumbs()}
         </div>
       </div>
     </div>
