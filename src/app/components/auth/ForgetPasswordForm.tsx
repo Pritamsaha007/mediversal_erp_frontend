@@ -21,6 +21,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
   const [loginMethod, setLoginMethod] = useState<string>("email");
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState<number>(0);
   const [formData, setFormData] = useState({
     email: "",
     mobile: "",
@@ -52,6 +53,14 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
     { id: "email", label: "Email" },
     { id: "mobile", label: "Mobile" },
   ];
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer]);
 
   const handleLoginToggle = (selectedId: string) => {
     setLoginMethod(selectedId);
@@ -353,6 +362,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
                               loginMethod
                             );
                             toast.success("OTP resent successfully!");
+                            setResendTimer(50);
                           } catch (error) {
                             console.error("Failed to resend OTP:", error);
                             toast.error(
@@ -363,9 +373,11 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
                           }
                         }}
                         className="text-[#0088B1] text-sm font-medium"
-                        disabled={isLoading}
+                        disabled={isLoading || resendTimer > 0}
                       >
-                        Resend OTP
+                        {resendTimer > 0
+                          ? `Resend OTP in ${resendTimer}s`
+                          : "Resend OTP"}
                       </button>
                     </div>
                   </>
