@@ -153,6 +153,7 @@ export default function Step2({
               { value: "sibling", label: "Sibling" },
               { value: "other", label: "Other" },
             ]}
+            value={formData.relation_type}
             onChange={(value) => onDropdownChange("relation_type", value)}
             required
           />

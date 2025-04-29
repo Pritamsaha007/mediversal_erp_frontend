@@ -88,6 +88,7 @@ export default function Step3({
             { value: "sibling", label: "Sibling" },
             { value: "self", label: "Self" },
           ]}
+          value={formData.pan_relation_type}
           onChange={(value) => onDropdownChange("pan_relation_type", value)}
           required
         />
@@ -126,6 +127,7 @@ export default function Step3({
             { value: "company3", label: "Company 3" },
             { value: "company4", label: "Company 4" },
           ]}
+          value={formData.insurance_company}
           onChange={(value) => onDropdownChange("insurance_company", value)}
           required
         />
@@ -154,6 +156,7 @@ export default function Step3({
             { value: "company3", label: "Company 3" },
             { value: "company4", label: "Company 4" },
           ]}
+          value={formData.opd_billing_category}
           onChange={(value) => onDropdownChange("opd_billing_category", value)}
           required
         />
@@ -169,6 +172,7 @@ export default function Step3({
             { value: "company3", label: "Company 3" },
             { value: "company4", label: "Company 4" },
           ]}
+          value={formData.ipd_billing_category}
           onChange={(value) => onDropdownChange("ipd_billing_category", value)}
           required
         />
@@ -184,6 +188,7 @@ export default function Step3({
             { value: "company3", label: "Company 3" },
             { value: "company4", label: "Company 4" },
           ]}
+          value={formData.discount_scheme}
           onChange={(value) => onDropdownChange("discount_scheme", value)}
           required
         />

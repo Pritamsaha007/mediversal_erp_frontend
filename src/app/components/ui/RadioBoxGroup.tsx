@@ -50,7 +50,7 @@ export const RadioBoxGroup: React.FC<RadioBoxGroupProps> = ({
             />
             <label
               htmlFor={`${name}-${option.value}`}
-              className="text-sm font-medium cursor-pointer select-none"
+              className="text-xs font-medium cursor-pointer select-none"
             >
               {option.label}
             </label>

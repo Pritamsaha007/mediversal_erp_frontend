@@ -88,8 +88,8 @@ const InputField: React.FC<InputFieldProps> = ({
         name={name}
         placeholder={placeholder}
         className={`${width} px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          error ? "border-red-500" : "border-gray-300 text-[#899193]"
-        } ${!required ? "bg-[#E5E8E9]" : ""}`}
+          error ? "border-red-500" : "border-gray-300"
+        } ${!required ? "bg-[#E5E8E9]" : ""} text-black`}
         onChange={handleChange}
         onBlur={handleBlur}
         {...rest}

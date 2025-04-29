@@ -55,7 +55,7 @@ export interface RegistrationFormData {
   pan_holder_name: string;
   pan_relation_type: string;
   tpa_information: string;
-  insurace_company: string;
+  insurance_company: string;
   opd_billing_category: string;
   ipd_billing_category: string;
   discount_scheme: string;

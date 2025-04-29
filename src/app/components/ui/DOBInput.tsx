@@ -11,6 +11,7 @@ interface DOBInputProps {
   maxAge?: number;
   onChange: (date: Date | null, isValid: boolean) => void;
   value?: Date | null;
+  isClearing?: boolean;
 }
 
 const DOBInput: React.FC<DOBInputProps> = ({
@@ -23,23 +24,35 @@ const DOBInput: React.FC<DOBInputProps> = ({
   maxAge = 120,
   onChange,
   value,
+  isClearing = false, // Default to false
 }) => {
   const [dateString, setDateString] = useState("");
   const [error, setError] = useState<string>("");
   const [touched, setTouched] = useState<boolean>(false);
 
   useEffect(() => {
-    if (value) {
+    if (isClearing) {
+      setDateString("");
+      setError("");
+      setTouched(false);
+      onChange(null, false);
+    } else if (value) {
       const year = value.getFullYear();
       const month = String(value.getMonth() + 1).padStart(2, "0");
       const day = String(value.getDate()).padStart(2, "0");
       setDateString(`${year}-${month}-${day}`);
+    } else {
+      setDateString("");
     }
-  }, [value]);
+  }, [value, isClearing, onChange]);
 
   const validateDate = (
     dateStr: string
   ): { isValid: boolean; message: string } => {
+    if (isClearing) {
+      return { isValid: true, message: "" };
+    }
+
     if (required && !dateStr) {
       return { isValid: false, message: "Date of birth is required" };
     }
@@ -48,7 +61,7 @@ const DOBInput: React.FC<DOBInputProps> = ({
       return { isValid: true, message: "" };
     }
 
-    // Basic format validation
+    // Rest of your validation logic remains the same...
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(dateStr)) {
       return {
@@ -57,13 +70,11 @@ const DOBInput: React.FC<DOBInputProps> = ({
       };
     }
 
-    // Check if it's a valid date
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) {
       return { isValid: false, message: "Please enter a valid date" };
     }
 
-    // Check if it's not in the future
     const today = new Date();
     if (date > today) {
       return {
@@ -72,7 +83,6 @@ const DOBInput: React.FC<DOBInputProps> = ({
       };
     }
 
-    // Check min/max age constraints
     const birthDate = new Date(dateStr);
     const ageDiff = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
@@ -116,6 +126,8 @@ const DOBInput: React.FC<DOBInputProps> = ({
   };
 
   const handleBlur = () => {
+    if (isClearing) return; // Skip validation during clearing
+
     setTouched(true);
     const validation = validateDate(dateString);
     setError(validation.message);
@@ -145,10 +157,12 @@ const DOBInput: React.FC<DOBInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         className={`${width} px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          error ? "border-red-500" : "border-gray-300"
+          error && !isClearing ? "border-red-500" : "border-gray-300"
         }`}
       />
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && !isClearing && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
     </div>
   );
 };
