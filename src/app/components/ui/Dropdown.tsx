@@ -26,7 +26,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   onChange,
   width = "w-full",
   required = false,
-  value: propValue,
+  value: propValue = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<DropdownOption | null>(
@@ -38,9 +38,9 @@ const Dropdown: React.FC<DropdownProps> = ({
   useEffect(() => {
     if (propValue) {
       const option = options.find((opt) => opt.value === propValue);
-      if (option) {
-        setSelectedOption(option);
-      }
+      setSelectedOption(option || null);
+    } else {
+      setSelectedOption(null);
     }
   }, [propValue, options]);
 

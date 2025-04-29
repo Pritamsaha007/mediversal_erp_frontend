@@ -46,7 +46,7 @@ export default function ContactForm() {
     pan_holder_name: "",
     pan_relation_type: "Self",
     tpa_information: "",
-    insurace_company: "",
+    insurance_company: "",
     opd_billing_category: "",
     ipd_billing_category: "",
     discount_scheme: "",
@@ -147,6 +147,7 @@ export default function ContactForm() {
   }, [formData.dateOfBirth, isValidDOB]);
 
   const validateField = (name: string, value: string): string => {
+    if (!value || value.trim() === "") return "";
     const rule = validationRules[name as keyof typeof validationRules];
 
     if (rule?.required && (!value || value.trim() === "")) {
@@ -275,7 +276,6 @@ export default function ContactForm() {
       setCurrentStep(currentStep - 1);
     }
   };
-
   const handleClearFields = () => {
     const fieldsToReset: Record<string, string | null> = {};
 
@@ -311,8 +311,14 @@ export default function ContactForm() {
       fieldsToReset.pan_number = "";
       fieldsToReset.pan_holder_name = "";
       fieldsToReset.pan_relation_type = "";
+      fieldsToReset.tpa_information = "";
+      fieldsToReset.insurance_company = "";
+      fieldsToReset.opd_billing_category = "";
+      fieldsToReset.ipd_billing_category = "";
+      fieldsToReset.discount_scheme = "";
     }
 
+    // Reset form data
     setFormData((prev) => ({
       ...prev,
       ...Object.fromEntries(
@@ -320,24 +326,48 @@ export default function ContactForm() {
       ),
     }));
 
+    // Reset touched state for cleared fields
     const fieldNames = Object.keys(fieldsToReset);
-    setTouched((prev) => ({
-      ...prev,
-      ...Object.fromEntries(fieldNames.map((key) => [key, false])),
-    }));
+    setTouched((prev) => {
+      const newTouched = { ...prev };
+      fieldNames.forEach((key) => {
+        newTouched[key] = false; // Explicitly set to false instead of removing
+      });
+      return newTouched;
+    });
 
-    setErrors((prev) => ({
-      ...prev,
-      ...Object.fromEntries(fieldNames.map((key) => [key, ""])),
-    }));
+    // Clear errors for cleared fields
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      fieldNames.forEach((key) => {
+        newErrors[key] = ""; // Set to empty string instead of removing
+      });
+      return newErrors;
+    });
 
-    setCompletedSteps(completedSteps.filter((step) => step !== currentStep));
+    // Remove current step from completed steps if it was completed
+    setCompletedSteps((prev) => prev.filter((step) => step !== currentStep));
   };
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Shift+Delete for clearing fields (existing)
       if (event.shiftKey && event.key === "Delete") {
         handleClearFields();
+      }
+
+      // Shift+Backspace for previous screen
+      if (event.shiftKey && event.key === "Backspace") {
+        event.preventDefault();
+        handlePrevious();
+      }
+
+      // Shift+Enter for next screen
+      if (event.shiftKey && event.key === "Enter") {
+        event.preventDefault();
+        // Only proceed if current step is valid
+        if (isStepValid(currentStep)) {
+          handleSubmit(new Event("submit") as unknown as FormEvent);
+        }
       }
     };
 
@@ -345,8 +375,7 @@ export default function ContactForm() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  });
-
+  }, [currentStep, isStepValid]);
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <div className="flex-1 bg-white overflow-x-hidden">

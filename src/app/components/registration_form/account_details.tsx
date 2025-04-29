@@ -98,6 +98,7 @@ export default function Step1({
                 ]}
                 required
                 width="w-full md:w-[384.5px]"
+                value={formData.id_type}
                 onChange={(value) => onDropdownChange("id_type", value)}
               />
 
@@ -133,6 +134,7 @@ export default function Step1({
                 ]}
                 required
                 width="w-full md:w-[162px]"
+                value={formData.salutation}
                 onChange={(value) => onDropdownChange("salutation", value)}
               />
 
@@ -213,6 +215,7 @@ export default function Step1({
             ]}
             required
             width="w-full md:w-[217px]"
+            value={formData.gender}
             onChange={(value) => onDropdownChange("gender", value)}
           />
 
@@ -225,8 +228,8 @@ export default function Step1({
             minAge={0}
             maxAge={120}
             onChange={onDOBChange}
+            value={formData.dateOfBirth}
           />
-
           <InputField
             name="age"
             label="Age (Y/M/D):"
@@ -254,6 +257,7 @@ export default function Step1({
               { value: "o_pos", label: "O+" },
               { value: "o_neg", label: "O-" },
             ]}
+            value={formData.bloodGroup}
             onChange={(value) => onDropdownChange("bloodGroup", value)}
           />
 
@@ -268,6 +272,7 @@ export default function Step1({
               { value: "divorced", label: "Divorced" },
               { value: "widowed", label: "Widowed" },
             ]}
+            value={formData.maritalStatus}
             onChange={(value) => onDropdownChange("maritalStatus", value)}
           />
           <InputField
@@ -311,6 +316,7 @@ export default function Step1({
               { value: "website", label: "Website" },
               { value: "other", label: "Other" },
             ]}
+            value={formData.patient_referral}
             onChange={(value) => onDropdownChange("patient_referral", value)}
           />
         </div>
