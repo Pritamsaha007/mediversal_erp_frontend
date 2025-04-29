@@ -7,7 +7,7 @@ import {
   ChevronRight,
   LucideComputer,
 } from "lucide-react";
-import MainMediversalLogo from "../login/assests/svgs/Mediversal FLogo - Color 1.svg";
+import MainMediversalLogo from "../../../../public/svgs/Mediversal FLogo - Color 1.svg";
 import Image from "next/image";
 import Link from "next/link";
 

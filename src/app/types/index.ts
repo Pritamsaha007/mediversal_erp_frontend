@@ -22,3 +22,41 @@ export interface User {
   updated_at: string;
   user_id: number;
 }
+export interface RegistrationFormData {
+  id_type: string;
+  id_number: string;
+  salutation: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  gender: string;
+  dateOfBirth: Date | null;
+  age: string;
+  bloodGroup: string;
+  maritalStatus: string;
+  religion: string;
+  caste: string;
+  occupation: string;
+  patient_referral: string;
+  nationality: "indian" | "foreigner";
+  patientType: "general" | "government" | "corporate" | "tpa";
+  patientcategory: "normal" | "vip";
+  email: string;
+  mobile_number: string;
+  patient_address: string;
+  pin_code: string;
+  city: string;
+  state: string;
+  country: string;
+  relation_type: string;
+  relative_name: string;
+  relative_number: string;
+  pan_number: string;
+  pan_holder_name: string;
+  pan_relation_type: string;
+  tpa_information: string;
+  insurace_company: string;
+  opd_billing_category: string;
+  ipd_billing_category: string;
+  discount_scheme: string;
+}

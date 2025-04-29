@@ -6,7 +6,7 @@ import MediversalMaatriLogo from "./assests/svgs/Mediversal Maatri.svg";
 import MediversalHealthStudio from "./assests/svgs/Mediversal Health Studio.svg";
 import Vector1 from "./assests/svgs/Vector 1.svg";
 import Vector2 from "./assests/svgs/Vector 2.svg";
-import { authService } from "../services/api";
+// import { authService } from "../services/api";
 import { useUserAuthStore } from "../store/userAuthSrore";
 
 export default function UnitSelectionScreen() {
@@ -37,17 +37,17 @@ export default function UnitSelectionScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  const logout = async () => {
-    try {
-      if (user?.user_id) {
-        await authService.logout(user.user_id);
-      }
-      useUserAuthStore.getState().clearAuth();
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+  // const logout = async () => {
+  //   try {
+  //     if (user?.user_id) {
+  //       await authService.logout(user.user_id);
+  //     }
+  //     useUserAuthStore.getState().clearAuth();
+  //     window.location.href = "/login";
+  //   } catch (error) {
+  //     console.error("Logout failed:", error);
+  //   }
+  // };
 
   const isLocationPermitted = (location: string) => {
     if (!locationPermission) return false;
@@ -179,12 +179,12 @@ export default function UnitSelectionScreen() {
           </div>
         )}
 
-        <button
+        {/* <button
           onClick={logout}
           className="bg-red-300 hover:bg-red-400 text-white font-semibold py-1.5 px-4 rounded-lg shadow-md transition duration-200"
         >
           Logout
-        </button>
+        </button> */}
       </div>
       <div
         className="absolute bottom-0 left-0 w-full"

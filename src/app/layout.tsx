@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import ProtectedRoute from "./components/protectedRoute";
+import ProtectedRoute from "./components/common/protectedRoute";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
