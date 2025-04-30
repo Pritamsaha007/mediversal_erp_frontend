@@ -84,7 +84,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-[302px] bg-white shadow-md">
+    <div className="flex flex-col h-screen w-[302px] bg-white shadow-md border-r-2 border-[#D3D7D8]">
       {/* Logo */}
       <div className="flex items-center justify-center h-[80px] p-4">
         <Image

@@ -66,10 +66,10 @@ export default function ImageUploader({
       <button
         type="button"
         onClick={handleButtonClick}
-        className="flex items-center justify-center py-2 px-6 rounded-md bg-[#0088B1] text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0088B1] w-full"
+        className="flex items-center justify-center py-3 px-3 rounded-md bg-[#0088B1] text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0088B1] w-full text-xs"
       >
         {fileName ? (
-          <div className="text-red-400 overflow-hidden whitespace-nowrap text-ellipsis max-w-full">
+          <div className="text-red-400 overflow-hidden whitespace-nowrap text-ellipsis max-w-full text-xs">
             {fileName}
           </div>
         ) : (
@@ -78,7 +78,7 @@ export default function ImageUploader({
       </button>
 
       {error && (
-        <div className="mt-2 text-sm text-red-500 self-start">{error}</div>
+        <div className="mt-2 text-sm text-red-400 self-start">{error}</div>
       )}
     </div>
   );

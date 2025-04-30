@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, ChevronDown, Bell, User } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronDown,
+  Bell,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useUserAuthStore } from "../store/userAuthSrore";
@@ -128,42 +135,46 @@ const Header: React.FC<HeaderProps> = ({ userName = "Monish Ranjan" }) => {
           {/* User dropdown */}
           <div className="relative">
             <button
-              className="flex items-center space-x-2 bg-[#0088B1] text-white px-4 py-2 rounded"
+              className="flex justify-between items-center space-x-2 bg-[#0088B1] text-white px-2 py-2 rounded gap-3"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center text-white mr-2">
-                <User size={14} />
+              <div className="flex items-center space-x-2 mr-2 flex-row">
+                <User size={16} />
+                <span className="text-xs">{userName}</span>
               </div>
-              <span>{userName}</span>
+
               <ChevronDown size={16} className="ml-1" />
             </button>
 
             {/* Dropdown menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+              <div className="absolute right-0 mt-2 w-40 bg-[#E8F4F7] rounded-md shadow-lg z-10">
                 <ul className="py-1 text-[#161D1F]">
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="px-4 py-2 text-sm hover:bg-gray-100  flex items-center gap-2"
                     >
+                      <User size={16} />
                       Profile
                     </a>
                   </li>
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="px-4 py-2 text-sm hover:bg-gray-100  flex items-center gap-2"
                     >
+                      <Settings size={16} />
                       Settings
                     </a>
                   </li>
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="px-4 py-2 text-sm hover:bg-gray-100 text-red-500 flex items-center gap-2"
                       onClick={logout}
                     >
+                      <LogOut size={16} />
                       Logout
                     </a>
                   </li>

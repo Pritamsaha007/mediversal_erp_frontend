@@ -78,7 +78,7 @@ const InputField: React.FC<InputFieldProps> = ({
     <div className="relative mt-6 mb-4">
       <label
         htmlFor={name}
-        className="absolute -top-6 left-0 text-sm font-medium text-gray-700"
+        className="absolute -top-6 left-0 text-xs font-medium text-gray-700"
       >
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
@@ -87,14 +87,14 @@ const InputField: React.FC<InputFieldProps> = ({
         id={name}
         name={name}
         placeholder={placeholder}
-        className={`${width} px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          error ? "border-red-500" : "border-gray-300"
-        } ${!required ? "bg-[#E5E8E9]" : ""} text-black`}
+        className={`${width} px-3 py-3 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+          error ? "border-red-400" : "border-gray-300"
+        } ${!required ? "bg-[#E5E8E9]" : ""} text-black text-xs`}
         onChange={handleChange}
         onBlur={handleBlur}
         {...rest}
       />
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-[10px] text-red-400">{error}</p>}
     </div>
   );
 };

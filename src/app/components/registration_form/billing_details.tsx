@@ -19,7 +19,7 @@ interface Step3Props {
 }
 
 const SectionHeader = ({ title }: { title: string }) => (
-  <div className="text-lg font-medium text-gray-800 mb-4 pb-2 w-full">
+  <div className="text-lg font-medium text-gray-800 mb-1 pb-2 w-full">
     {title}
   </div>
 );
@@ -41,7 +41,7 @@ export default function Step3({
   return (
     <form onSubmit={onSubmit} className="bg-white p-6">
       <SectionHeader title="PAN Card Details" />
-      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-2 justify-between">
         <InputField
           name="pan_number"
           label="PAN Number"
@@ -104,7 +104,7 @@ export default function Step3({
       </div>
 
       <SectionHeader title="Insurance Details" />
-      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-2 justify-between">
         <InputField
           name="tpa_information"
           label="TPA/Corporate Information"
@@ -144,7 +144,7 @@ export default function Step3({
 
       {/* Billing Categories Section */}
       <SectionHeader title="Billing Categories" />
-      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+      <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-2 justify-between">
         <Dropdown
           name="opd_billing_category"
           label="OPD Billing Category"
@@ -197,7 +197,7 @@ export default function Step3({
       <SectionHeader title="Additional Documents" />
       <div className="mb-6">
         <MultiImageUploader
-          width="w-[988px]"
+          width="w-full"
           labelText="Upload Additional Documents"
           buttonText="Choose Files"
           onFilesSelected={handleMultipleFilesSelected}
@@ -212,23 +212,23 @@ export default function Step3({
             <button
               type="button"
               onClick={onClearFields}
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200"
+              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
             >
               Clear Fields
             </button>
-            <h3 className="text-sm text-gray-600 text-center">
+            <h3 className="text-sm text-gray-600 text-center text-[10px]">
               <span className="font-semibold">Shift + Delete</span>
             </h3>
           </div>
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200"
+              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
               onClick={onPrevious}
             >
               Previous Section
             </button>
-            <h3 className="text-sm text-gray-600 text-center">
+            <h3 className="text-sm text-gray-600 text-center text-[10px]">
               <span className="font-semibold">Shift + Backspace</span>
             </h3>
           </div>
@@ -239,12 +239,12 @@ export default function Step3({
                 isStepValid
                   ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } focus:outline-none focus:ring-2 focus:ring-[#0088B1] transition-all duration-200`}
+              } focus:outline-none focus:ring-2 focus:ring-[#0088B1] transition-all duration-200 text-sm`}
               disabled={!isStepValid}
             >
               Register Patient
             </button>
-            <h3 className="text-sm text-gray-600 text-center">
+            <h3 className="text-sm text-gray-600 text-center text-[10px]">
               <span className="font-semibold">Shift + Enter</span>
             </h3>
           </div>
