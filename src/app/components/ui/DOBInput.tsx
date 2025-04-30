@@ -143,7 +143,7 @@ const DOBInput: React.FC<DOBInputProps> = ({
     <div className="relative mt-6 mb-4">
       <label
         htmlFor={name}
-        className="absolute -top-6 left-0 text-sm font-medium text-gray-700"
+        className="absolute -top-6 left-0 text-xs font-medium text-gray-700"
       >
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
@@ -156,12 +156,12 @@ const DOBInput: React.FC<DOBInputProps> = ({
         value={dateString}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`${width} px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          error && !isClearing ? "border-red-500" : "border-gray-300"
+        className={`${width} px-3 py-3 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black text-xs ${
+          error && !isClearing ? "border-red-400" : "border-gray-300"
         }`}
       />
       {error && !isClearing && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-1 text-[10px] text-red-400">{error}</p>
       )}
     </div>
   );

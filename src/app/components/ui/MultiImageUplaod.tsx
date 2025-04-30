@@ -79,8 +79,14 @@ export default function MultiImageUploader({
 
   return (
     <div className={`${width} relative flex flex-col`}>
-      <div className="mb-2 text-sm font-medium text-gray-700">{labelText}</div>
-
+      <div className="flex gap-1">
+        <div className="mb-2 text-xs font-medium text-gray-700">
+          {labelText}
+        </div>
+        <h1 className="text-[8px] text-gray-400 mt-1">
+          (You can select multiple files)
+        </h1>
+      </div>
       <div className=" bg-white">
         <input
           type="file"
@@ -103,7 +109,7 @@ export default function MultiImageUploader({
               <button
                 type="button"
                 onClick={() => removeFile(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
+                className="ml-2 text-red-400 hover:text-red-500"
               ></button>
             </div>
           ))}
@@ -112,12 +118,17 @@ export default function MultiImageUploader({
         <button
           type="button"
           onClick={handleButtonClick}
-          className="flex items-center justify-center py-2 px-6 rounded-md border border-[#0088B1] text-[#0088B1] hover:bg-[#0088B1] hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0088B1] w-full"
+          className="flex items-center justify-center py-4 px-6 rounded-md border border-[#0088B1] text-[#0088B1] hover:bg-[#0088B1] hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0088B1] w-full text-xs"
         >
-          {buttonText}
+          <div className="flex gap-1 items-center">
+            {buttonText}
+            <h1 className="text-[10px] text-gray-400">
+              (You can select multiple files)
+            </h1>
+          </div>
         </button>
 
-        {error && <div className="mt-2 text-sm text-red-500">{error}</div>}
+        {error && <div className="mt-2 text-sm text-red-400">{error}</div>}
       </div>
     </div>
   );

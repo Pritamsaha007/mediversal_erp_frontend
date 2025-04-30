@@ -84,9 +84,9 @@ export default function Step1({
       </div>
 
       <form onSubmit={onSubmit} className="bg-white">
-        <div className="flex flex-col lg:flex-row gap-25">
-          <div className="lg:w-3/4">
-            <div className="flex flex-col md:flex-row md:space-x-6 mb-6">
+        <div className="flex flex-col lg:flex-row h-full justify-between">
+          <div className=" justify-between">
+            <div className="flex flex-col md:flex-row md:space-x-6 mb-2 ">
               <Dropdown
                 name="id_type"
                 label="ID Type"
@@ -121,7 +121,7 @@ export default function Step1({
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:space-x-6 mb-6">
+            <div className="flex flex-col md:flex-row md:space-x-6 mb-6 justify-between">
               <Dropdown
                 name="salutation"
                 label="Salutation:"
@@ -174,20 +174,16 @@ export default function Step1({
             </div>
           </div>
 
-          <div className="lg:w-1/4 flex items-center justify-center mb-6 lg:mb-0">
-            <div className="h-full flex items-center justify-center">
-              <Image
-                src={ProfileDummyImage}
-                alt="Doctor Illustration"
-                width={400}
-                height={200}
-                className="w-full max-w-sm mx-auto"
-              />
-            </div>
+          <div>
+            <Image
+              src={ProfileDummyImage}
+              alt="Doctor Illustration"
+              className="h-full w-full"
+            />
           </div>
         </div>
 
-        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-2 justify-between">
           <InputField
             name="last_name"
             label="Last Name"
@@ -241,7 +237,7 @@ export default function Step1({
           />
         </div>
 
-        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-2 justify-between">
           <Dropdown
             name="bloodGroup"
             label="Blood Group:"
@@ -286,7 +282,7 @@ export default function Step1({
           />
         </div>
 
-        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6">
+        <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6 justify-between">
           <InputField
             name="caste"
             label="Caste"
@@ -326,11 +322,11 @@ export default function Step1({
             <button
               type="button"
               onClick={onClearFields}
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200"
+              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
             >
               Clear Fields
             </button>
-            <h3 className="text-sm text-gray-600 text-center">
+            <h3 className="text-sm text-gray-600 text-center text-[10px]">
               <span className="font-semibold">Shift + Delete</span>
             </h3>
           </div>
@@ -341,12 +337,12 @@ export default function Step1({
                 isStepValid
                   ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } focus:outline-none focus:ring-2 focus:ring-[#0088B1]`}
+              } focus:outline-none focus:ring-2 focus:ring-[#0088B1] text-sm`}
               disabled={!isStepValid}
             >
               Proceed to Next Step
             </button>
-            <h3 className="text-sm text-gray-600 text-center">
+            <h3 className="text-sm text-gray-600 text-center text-[10px]">
               <span className="font-semibold">Shift + Enter</span>
             </h3>
           </div>
