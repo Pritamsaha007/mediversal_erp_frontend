@@ -102,16 +102,16 @@ const Sidebar = () => {
       {/* Menu Items */}
       <div className="flex flex-col overflow-y-auto py-6 px-2 space-y-1 justify-center items-center">
         {menuItems.map((menu) => (
-          <div key={menu.name} className="mb-1">
+          <div key={menu.name} className="mb-2 w-full">
             {/* Main Menu Item */}
             <div
-              className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-lg w-[254px] h-[36px]
+              className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-lg w-[254px] h-[36px] mx-auto
                 ${
                   selectedMenu === menu.name
                     ? "bg-[#0088B1] text-[#F8F8F8] shadow-sm"
                     : "bg-white text-[#161D1F] hover:bg-gray-50"
                 }
-                transition-colors duration-200`}
+                transition-all duration-300 ease-in-out`}
               onClick={() => toggleMenu(menu.name)}
             >
               <div className="flex items-center">
@@ -145,17 +145,17 @@ const Sidebar = () => {
 
             {/* Sub Menu Items */}
             {openMenu === menu.name && menu.subItems && (
-              <div className="mt-1 rounded-lg space-y-1 py-1">
+              <div className="mt-2 rounded-lg space-y-2 py-1 pl-2">
                 {menu.subItems.map((subItem) => (
                   <Link href={subItem.link} key={subItem.name}>
                     <div
-                      className={`flex items-center px-4 py-2 cursor-pointer rounded-md mx-2 w-[254px] h-[32px]
+                      className={`flex items-center px-4 py-2 cursor-pointer rounded-md mx-2 w-[234px] h-[36px]
                         ${
                           selectedSubMenu === subItem.name
                             ? "bg-[#D0E8F0] text-[#161D1F] font-medium"
-                            : "text-[#161D1F] hover:bg-[#D0E8F0]"
+                            : "text-[#161D1F] hover:bg-[#D0E8F0] hover:my-0.5 hover:py-2"
                         }
-                        transition-colors duration-200`}
+                        transition-all duration-200 ease-in-out`}
                       onClick={() => handleSubMenuClick(subItem.name)}
                     >
                       <CornerDownRight
