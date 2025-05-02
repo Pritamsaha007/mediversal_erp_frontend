@@ -4,7 +4,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import LoginToggle from "../ui/Toggle";
 import { useAuthStore } from "../../store/loginStore";
-import { authService } from "../../services/api";
+import { authService } from "../../services/auth_apis";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useUserAuthStore } from "@/app/store/userAuthSrore";
