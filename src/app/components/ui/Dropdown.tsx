@@ -93,13 +93,13 @@ const Dropdown: React.FC<DropdownProps> = ({
           type="button"
           onClick={toggleDropdown}
           onBlur={handleBlur}
-          className={`flex justify-between items-center w-full px-3 py-3 text-left bg-white border rounded-md shadow-sm focus:outline-none  text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          className={`flex justify-between items-center w-full px-3 py-3 text-left border rounded-md shadow-sm text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             ${
               touched && required && !selectedOption
                 ? "border-red-400"
                 : "border-gray-300"
             }
-            ${!required ? "bg-[#E5E8E9]" : ""}`}
+            ${!required && !selectedOption ? "bg-[#E5E8E9]" : "bg-white"}`}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >

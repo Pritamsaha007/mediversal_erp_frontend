@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import InputField from "@/app/components/ui/Input";
 import Dropdown from "@/app/components/ui/Dropdown";
 import DOBInput from "@/app/components/ui/DOBInput";
@@ -6,6 +6,9 @@ import Image from "next/image";
 import ProfileDummyImage from "./assets/svgs/image-up.svg";
 import { RadioBoxGroup } from "@/app/components/ui/RadioBoxGroup";
 import { RegistrationFormData } from "@/app/types";
+import { useMasterStore } from "@/app/store/masterStore";
+import { useRouter } from "next/navigation";
+
 interface Step1Props {
   formData: RegistrationFormData;
   errors: Record<string, string>;
@@ -32,6 +35,13 @@ export default function Step1({
   onClearFields,
   onSubmit,
 }: Step1Props) {
+  const fetchMasterData = useMasterStore((state) => state.fetchMasterData);
+  const masterData = useMasterStore((state) => state.data);
+  useEffect(() => {
+    fetchMasterData();
+  }, [fetchMasterData]);
+  const router = useRouter();
+
   return (
     <>
       <div className="mb-8 flex flex-col md:flex-row gap-4 md:gap-8">
@@ -91,11 +101,15 @@ export default function Step1({
                 name="id_type"
                 label="ID Type"
                 placeholder="Select patient ID Type"
-                options={[
-                  { value: "addhar_card", label: "Addhar Card" },
-                  { value: "passport", label: "Passport" },
-                  { value: "pan_card", label: "Pan Card" },
-                ]}
+                options={
+                  formData.nationality === "foreigner"
+                    ? [{ value: "passport", label: "Passport" }]
+                    : [
+                        { value: "addhar_card", label: "Addhar Card" },
+                        { value: "passport", label: "Passport" },
+                        { value: "pan_card", label: "Pan Card" },
+                      ]
+                }
                 required
                 width="w-full md:w-[384.5px]"
                 value={formData.id_type}
@@ -126,16 +140,25 @@ export default function Step1({
                 name="salutation"
                 label="Salutation:"
                 placeholder="Salutation"
-                options={[
-                  { value: "mr", label: "Mr." },
-                  { value: "mrs", label: "Mrs." },
-                  { value: "ms", label: "Ms." },
-                  { value: "dr", label: "Dr." },
-                ]}
+                options={Object.entries(masterData?.salutation || {})
+                  .filter(([key]) => key !== "_id")
+                  .map(([key, label]) => ({
+                    value: key,
+                    label: label as string,
+                  }))}
                 required
                 width="w-full md:w-[162px]"
-                value={formData.salutation}
-                onChange={(value) => onDropdownChange("salutation", value)}
+                value={
+                  Object.entries(masterData?.salutation || {}).find(
+                    ([, val]) => val === formData.salutation
+                  )?.[0] || ""
+                }
+                onChange={(selectedKey) => {
+                  const selectedLabel = masterData?.salutation?.[selectedKey];
+                  if (selectedLabel) {
+                    onDropdownChange("salutation", selectedLabel);
+                  }
+                }}
               />
 
               <InputField
@@ -192,6 +215,7 @@ export default function Step1({
             value={formData.last_name}
             onChange={onInputChange}
             onBlur={onBlur}
+            required
             validationRules={[
               {
                 pattern: /^[a-zA-Z\s]*$/,
@@ -204,15 +228,25 @@ export default function Step1({
             name="gender"
             label="Gender"
             placeholder="Select Gender"
-            options={[
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
-              { value: "other", label: "Other" },
-            ]}
+            options={Object.entries(masterData?.gender || {})
+              .filter(([key]) => key !== "_id")
+              .map(([key, label]) => ({
+                value: key,
+                label: label as string,
+              }))}
             required
             width="w-full md:w-[217px]"
-            value={formData.gender}
-            onChange={(value) => onDropdownChange("gender", value)}
+            value={
+              Object.entries(masterData?.gender || {}).find(
+                ([, val]) => val === formData.gender
+              )?.[0] || ""
+            }
+            onChange={(selectedKey) => {
+              const selectedLabel = masterData?.gender?.[selectedKey];
+              if (selectedLabel) {
+                onDropdownChange("gender", selectedLabel);
+              }
+            }}
           />
 
           <DOBInput
@@ -243,18 +277,23 @@ export default function Step1({
             label="Blood Group:"
             placeholder="Select Blood Group"
             width="w-full md:w-[302.67px]"
-            options={[
-              { value: "a_pos", label: "A+" },
-              { value: "a_neg", label: "A-" },
-              { value: "b_pos", label: "B+" },
-              { value: "b_neg", label: "B-" },
-              { value: "ab_pos", label: "AB+" },
-              { value: "ab_neg", label: "AB-" },
-              { value: "o_pos", label: "O+" },
-              { value: "o_neg", label: "O-" },
-            ]}
-            value={formData.bloodGroup}
-            onChange={(value) => onDropdownChange("bloodGroup", value)}
+            options={Object.entries(masterData?.blood_group || {})
+              .filter(([key]) => key !== "_id")
+              .map(([key, label]) => ({
+                value: key,
+                label: label as string,
+              }))}
+            value={
+              Object.entries(masterData?.blood_group || {}).find(
+                ([, val]) => val === formData.bloodGroup
+              )?.[0] || ""
+            }
+            onChange={(selectedKey) => {
+              const selectedLabel = masterData?.blood_group?.[selectedKey];
+              if (selectedLabel) {
+                onDropdownChange("bloodGroup", selectedLabel);
+              }
+            }}
           />
 
           <Dropdown
@@ -262,36 +301,75 @@ export default function Step1({
             label="Marital Status:"
             placeholder="Select Marital Status"
             width="w-full md:w-[302.67px]"
-            options={[
-              { value: "single", label: "Single" },
-              { value: "married", label: "Married" },
-              { value: "divorced", label: "Divorced" },
-              { value: "widowed", label: "Widowed" },
-            ]}
-            value={formData.maritalStatus}
-            onChange={(value) => onDropdownChange("maritalStatus", value)}
+            options={Object.entries(masterData?.marital_status || {})
+              .filter(([key]) => key !== "_id")
+              .map(([key, label]) => ({
+                value: key,
+                label: label as string,
+              }))}
+            value={
+              Object.entries(masterData?.marital_status || {}).find(
+                ([, val]) => val === formData.maritalStatus
+              )?.[0] || ""
+            }
+            onChange={(selectedKey) => {
+              const selectedLabel = masterData?.marital_status?.[selectedKey];
+              if (selectedLabel) {
+                onDropdownChange("maritalStatus", selectedLabel);
+              }
+            }}
           />
-          <InputField
+
+          <Dropdown
             name="religion"
             label="Religion"
             placeholder="Optional"
             width="w-full md:w-[302.67px]"
-            value={formData.religion}
-            onChange={onInputChange}
-            onBlur={onBlur}
+            options={Object.entries(masterData?.religion || {})
+              .filter(([key]) => key !== "_id")
+              .map(([key, label]) => ({
+                value: key,
+                label: label as string,
+              }))}
+            value={
+              Object.entries(masterData?.religion || {}).find(
+                ([, val]) => val === formData.religion
+              )?.[0] || ""
+            }
+            onChange={(selectedKey) => {
+              const selectedLabel = masterData?.religion?.[selectedKey];
+              if (selectedLabel) {
+                onDropdownChange("religion", selectedLabel);
+              }
+            }}
           />
         </div>
 
         <div className="flex flex-wrap md:flex-nowrap md:space-x-6 mb-6 justify-between">
-          <InputField
+          <Dropdown
             name="caste"
             label="Caste"
             placeholder="Optional"
             width="w-full md:w-[302.67px]"
-            value={formData.caste}
-            onChange={onInputChange}
-            onBlur={onBlur}
+            options={Object.entries(masterData?.caste || {})
+              .filter(([key]) => key !== "_id")
+              .map(([key, label]) => ({
+                value: key,
+                label: label as string,
+              }))}
+            value={
+              Object.entries(masterData?.caste || {}).find(
+                ([, val]) => val === formData.caste
+              )?.[0] || ""
+            }
+            onChange={(selectedKey) => {
+              const selectedLabel = masterData?.caste?.[selectedKey];
+              if (selectedLabel) {
+                onDropdownChange("caste", selectedLabel);
+              }
+            }}
           />
+
           <InputField
             name="occupation"
             label="Occupation"
@@ -316,35 +394,43 @@ export default function Step1({
             onChange={(value) => onDropdownChange("patient_referral", value)}
           />
         </div>
+        <div className="flex justify-between items-end">
+          <button
+            onClick={() => router.push("/dashboard/front-desk/patient-search")}
+            className="text-sm text-[#899193] hover:underline mb-4"
+          >
+            Go to Patient Search
+          </button>
 
-        <div className="flex justify-end mt-6 gap-5">
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={onClearFields}
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
-            >
-              Clear Fields
-            </button>
-            <h3 className="text-sm text-gray-600 text-center text-[10px]">
-              <span className="font-semibold">Shift + Delete</span>
-            </h3>
-          </div>
-          <div className="flex flex-col gap-2">
-            <button
-              type="submit"
-              className={`py-2 px-6 rounded-md ${
-                isStepValid
-                  ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } focus:outline-none focus:ring-2 focus:ring-[#0088B1] text-sm`}
-              disabled={!isStepValid}
-            >
-              Proceed to Next Step
-            </button>
-            <h3 className="text-sm text-gray-600 text-center text-[10px]">
-              <span className="font-semibold">Shift + Enter</span>
-            </h3>
+          <div className="flex justify-end gap-5">
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={onClearFields}
+                className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
+              >
+                Clear Fields
+              </button>
+              <h3 className="text-sm text-gray-600 text-center text-[10px]">
+                <span className="font-semibold">Shift + Delete</span>
+              </h3>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                type="submit"
+                className={`py-2 px-6 rounded-md ${
+                  isStepValid
+                    ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } focus:outline-none focus:ring-2 focus:ring-[#0088B1] text-sm`}
+                disabled={!isStepValid}
+              >
+                Proceed to Next Step
+              </button>
+              <h3 className="text-sm text-gray-600 text-center text-[10px]">
+                <span className="font-semibold">Shift + Enter</span>
+              </h3>
+            </div>
           </div>
         </div>
       </form>

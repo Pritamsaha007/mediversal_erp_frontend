@@ -11,7 +11,7 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import { useUserAuthStore } from "../store/userAuthSrore";
-import { authService } from "../services/api";
+import { authService } from "../services/auth_apis";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";

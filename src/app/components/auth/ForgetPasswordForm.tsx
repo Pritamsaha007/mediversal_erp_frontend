@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoginToggle from "../ui/Toggle";
 import Image from "next/image";
-import { authService } from "@/app/services/api";
+import { authService } from "@/app/services/auth_apis";
 import { toast } from "react-hot-toast";
 
 type ForgetPasswordComponentProps = {

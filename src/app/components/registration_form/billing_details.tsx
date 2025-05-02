@@ -4,6 +4,7 @@ import Dropdown from "@/app/components/ui/Dropdown";
 import { RegistrationFormData } from "@/app/types";
 import ImageUploader from "@/app/components/ui/ImageUpload";
 import MultiImageUploader from "@/app/components/ui/MultiImageUplaod";
+import { useRouter } from "next/navigation";
 
 interface Step3Props {
   formData: RegistrationFormData;
@@ -34,6 +35,7 @@ export default function Step3({
   onPrevious,
   onSubmit,
 }: Step3Props) {
+  const router = useRouter();
   const handleMultipleFilesSelected = (files: File[]) => {
     console.log("Selected files:", files);
   };
@@ -206,47 +208,56 @@ export default function Step3({
         />
       </div>
 
-      <div className="flex justify-end mt-6">
-        <div className="flex flex-wrap gap-5">
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={onClearFields}
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
-            >
-              Clear Fields
-            </button>
-            <h3 className="text-sm text-gray-600 text-center text-[10px]">
-              <span className="font-semibold">Shift + Delete</span>
-            </h3>
-          </div>
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
-              onClick={onPrevious}
-            >
-              Previous Section
-            </button>
-            <h3 className="text-sm text-gray-600 text-center text-[10px]">
-              <span className="font-semibold">Shift + Backspace</span>
-            </h3>
-          </div>
-          <div className="flex flex-col gap-2">
-            <button
-              type="submit"
-              className={`py-2 px-6 rounded-md ${
-                isStepValid
-                  ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } focus:outline-none focus:ring-2 focus:ring-[#0088B1] transition-all duration-200 text-sm`}
-              disabled={!isStepValid}
-            >
-              Register Patient
-            </button>
-            <h3 className="text-sm text-gray-600 text-center text-[10px]">
-              <span className="font-semibold">Shift + Enter</span>
-            </h3>
+      <div className="flex justify-between items-end">
+        <button
+          onClick={() => router.push("/dashboard/front-desk/patient-search")}
+          className="text-sm text-[#899193] hover:underline mb-4"
+        >
+          Go to Patient Search
+        </button>
+
+        <div className="flex justify-end gap-5">
+          <div className="flex flex-wrap gap-5">
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={onClearFields}
+                className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
+              >
+                Clear Fields
+              </button>
+              <h3 className="text-sm text-gray-600 text-center text-[10px]">
+                <span className="font-semibold">Shift + Delete</span>
+              </h3>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                className="text-[#0088B1] py-2 px-6 rounded-md border border-[#0088B1] outline-none hover:bg-[#0088B1] hover:text-white transition-all duration-200 text-sm"
+                onClick={onPrevious}
+              >
+                Previous Section
+              </button>
+              <h3 className="text-sm text-gray-600 text-center text-[10px]">
+                <span className="font-semibold">Shift + Backspace</span>
+              </h3>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                type="submit"
+                className={`py-2 px-6 rounded-md ${
+                  isStepValid
+                    ? "bg-[#0088B1] text-white hover:bg-[#0077A0]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } focus:outline-none focus:ring-2 focus:ring-[#0088B1] transition-all duration-200 text-sm`}
+                disabled={!isStepValid}
+              >
+                Register Patient
+              </button>
+              <h3 className="text-sm text-gray-600 text-center text-[10px]">
+                <span className="font-semibold">Shift + Enter</span>
+              </h3>
+            </div>
           </div>
         </div>
       </div>
